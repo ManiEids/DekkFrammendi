@@ -15,7 +15,11 @@ export function useDekkja(filter: DekkFilter = {}) {
     () => fetchDekk(filter),
     {
       staleTime: 5 * 60 * 1000, // 5 minutes
-      keepPreviousData: true
+      keepPreviousData: true,
+      retry: 2,
+      onError: (error) => {
+        console.error('Error fetching tires:', error);
+      }
     }
   );
 }
@@ -23,18 +27,31 @@ export function useDekkja(filter: DekkFilter = {}) {
 export function useStaerdir() {
   return useQuery('staerdir', fetchStaerdir, {
     staleTime: Infinity, // These rarely change
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    onError: (error) => {
+      console.error('Error fetching sizes:', error);
+    }
   });
 }
 
 export function useFramleideendur() {
   return useQuery('framleideendur', fetchFramleideendur, {
     staleTime: 60 * 60 * 1000, // 1 hour
+    retry: 2,
+    onError: (error) => {
+      console.error('Error fetching manufacturers:', error);
+    }
   });
 }
 
 export function useVefsidur() {
   return useQuery('vefsidur', fetchVefsidur, {
     staleTime: 60 * 60 * 1000, // 1 hour
+    retry: 2,
+    onError: (error) => {
+      console.error('Error fetching websites:', error);
+    }
   });
 }
 
@@ -51,6 +68,10 @@ export function useSkrapa() {
           queryClient.invalidateQueries('dekk');
           queryClient.invalidateQueries('staerdir');
         }, 10000); // Wait 10 seconds before refreshing data
+      },
+      onError: (error) => {
+        console.error('Error during scraping:', error);
+        alert('Villa kom upp við skröpun. Bakendi virðist ekki vera tengdur.');
       }
     }
   );
@@ -60,5 +81,6 @@ export function useApiHealth() {
   return useQuery('apiHealth', checkHealth, {
     refetchInterval: 60000, // Check API health every minute
     retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 }
