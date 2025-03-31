@@ -17,16 +17,17 @@ export default function DekkjaFilter({
   const { data: staerdir, isLoading } = useStaerdir();
   const [isOpen, setIsOpen] = useState(true);
 
+  // Fix TypeScript error by avoiding spread on Set
   const breiddir = staerdir 
-    ? [...new Set(staerdir.map(s => s.breidd))].sort((a, b) => a - b)
+    ? Array.from(new Set(staerdir.map(s => s.breidd))).sort((a, b) => a - b)
     : [];
   
   const haedir = staerdir
-    ? [...new Set(staerdir.map(s => s.haed))].sort((a, b) => a - b)
+    ? Array.from(new Set(staerdir.map(s => s.haed))).sort((a, b) => a - b)
     : [];
   
   const felgur = staerdir
-    ? [...new Set(staerdir.map(s => s.felga))].sort((a, b) => a - b)
+    ? Array.from(new Set(staerdir.map(s => s.felga))).sort((a, b) => a - b)
     : [];
 
   // Handle sorting change

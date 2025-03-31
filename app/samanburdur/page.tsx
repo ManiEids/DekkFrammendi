@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaArrowLeft, FaTimes, FaTire } from 'react-icons/fa';
+import { FaArrowLeft, FaTimes, FaCar } from 'react-icons/fa';
 import { fetchDekk } from '../lib/api';
 import { Dekk } from '../types';
 
@@ -135,7 +135,7 @@ export default function Samanburdur() {
                       />
                     ) : (
                       <div className="h-full flex items-center justify-center bg-gray-100">
-                        <FaTire size={48} className="text-gray-300" />
+                        <FaCar size={48} className="text-gray-300" />
                       </div>
                     )}
                   </div>

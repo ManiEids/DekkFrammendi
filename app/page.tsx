@@ -16,15 +16,15 @@ export default function Forsida() {
   });
 
   const breiddir = staerdir 
-    ? [...new Set(staerdir.map(s => s.breidd))].sort((a, b) => a - b)
+    ? Array.from(new Set(staerdir.map(s => s.breidd))).sort((a, b) => a - b)
     : [];
   
   const haedir = staerdir
-    ? [...new Set(staerdir.map(s => s.haed))].sort((a, b) => a - b)
+    ? Array.from(new Set(staerdir.map(s => s.haed))).sort((a, b) => a - b)
     : [];
   
   const felgur = staerdir
-    ? [...new Set(staerdir.map(s => s.felga))].sort((a, b) => a - b)
+    ? Array.from(new Set(staerdir.map(s => s.felga))).sort((a, b) => a - b)
     : [];
 
   const handleLeit = () => {

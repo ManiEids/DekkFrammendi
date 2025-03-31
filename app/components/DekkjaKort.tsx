@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Dekk } from '../types';
-import { FaTire } from 'react-icons/fa';
+import { FaCar } from 'react-icons/fa';  // Changed from FaTire to FaCar which exists
 
 interface DekkjaKortProps {
   dekk: Dekk;
@@ -38,7 +38,7 @@ export default function DekkjaKort({ dekk, onAddToSamanburdur, isSelected }: Dek
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
-              <FaTire size={48} className="text-gray-300" />
+              <FaCar size={48} className="text-gray-300" /> {/* Changed from FaTire to FaCar */}
             </div>
           )}
         </div>
