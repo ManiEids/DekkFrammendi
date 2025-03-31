@@ -1,81 +1,64 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useApiHealth, useStaerdir } from '../hooks/useDekkjaApi';
-import { FaExclamationTriangle } from 'react-icons/fa';
+import { useDekkja, useStaerdir, useSkrapa } from '../hooks/useDekkjaApi';
+import { FaExclamationTriangle, FaSyncAlt } from 'react-icons/fa';
 
 export default function ConnectionStatus() {
-  const { data: isHealthy, isLoading: healthLoading, isError: healthError } = useApiHealth();
-  const { data: sizes, isLoading: sizesLoading, isError: sizesError } = useStaerdir();
+  const { data: dekk, isLoading: dekkLoading, isError: dekkError } = useDekkja({});
+  const { data: staerdir, isLoading: staerdirLoading } = useStaerdir();
+  const { mutate: skrapa, isLoading: isSkraping } = useSkrapa();
   const [isVisible, setIsVisible] = useState(true);
-  const [backendStatus, setBackendStatus] = useState<'unknown' | 'connecting' | 'connected' | 'error'>('unknown');
   
-  // Determine the overall connection status
-  useEffect(() => {
-    if (healthLoading || sizesLoading) {
-      setBackendStatus('connecting');
-    } else if (healthError && sizesError) {
-      // Both endpoints failed
-      setBackendStatus('error');
-    } else if (sizes && sizes.length > 0) {
-      // If we have sizes data, the connection is working
-      setBackendStatus('connected');
-    } else if (isHealthy) {
-      // Health endpoint returns success but no data yet
-      setBackendStatus('connected');
-    } else {
-      setBackendStatus('error');
-    }
-  }, [healthLoading, healthError, isHealthy, sizes, sizesLoading, sizesError]);
+  // Simple status determination - we mainly care if there's data
+  const hasData = (dekk && dekk.length > 0) || (staerdir && staerdir.length > 0);
+  const isLoading = dekkLoading || staerdirLoading || isSkraping;
+  const hasError = dekkError && !hasData;
+  
+  let status: 'loading' | 'data' | 'error' = 'loading';
+  if (hasData) status = 'data';
+  else if (hasError && !isLoading) status = 'error';
+  else status = 'loading';
 
-  // Auto-hide after 10 seconds if connection is good
+  // Handle manual scraping for demonstration
+  const handleScrapeSample = () => {
+    // Default values for a common tire size
+    skrapa({ breidd: 205, haed: 55, felga: 16 });
+  };
+
+  // Hide after 10 seconds if data is loaded
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    
-    if (backendStatus === 'connected') {
-      timer = setTimeout(() => {
-        setIsVisible(false);
-      }, 10000);
-    } else {
-      setIsVisible(true);
+    if (status === 'data') {
+      timer = setTimeout(() => setIsVisible(false), 10000);
     }
-    
     return () => clearTimeout(timer);
-  }, [backendStatus]);
+  }, [status]);
 
   const getStatusText = () => {
-    switch (backendStatus) {
-      case 'connecting':
-        return 'Tengist vefþjónustu...';
-      case 'connected':
-        return 'Tengt við vefþjónustu';
-      case 'error':
-        return 'Ekki tengt við vefþjónustu';
-      default:
-        return 'Staða tengingar óþekkt';
+    switch (status) {
+      case 'loading': return 'Sækir gögn...';
+      case 'data': return 'Bakendi með gögn';
+      case 'error': return 'Engin gögn í bakenda';
     }
   };
 
   const getStatusColor = () => {
-    switch (backendStatus) {
-      case 'connecting':
-        return 'bg-yellow-500';
-      case 'connected':
-        return 'bg-green-500';
-      case 'error':
-        return 'bg-red-500';
-      default:
-        return 'bg-gray-500';
+    switch (status) {
+      case 'loading': return 'bg-yellow-500';
+      case 'data': return 'bg-green-500';
+      case 'error': return 'bg-red-500';
     }
   };
 
+  // Minimized state
   if (!isVisible) {
     return (
       <button 
         onClick={() => setIsVisible(true)}
         className="fixed bottom-4 left-4 p-2 bg-gray-200 hover:bg-gray-300 rounded-md z-50 text-xs"
       >
-        Sýna tengivísi
+        Sýna stöðu
       </button>
     );
   }
@@ -93,10 +76,23 @@ export default function ConnectionStatus() {
         </button>
       </div>
       
-      {backendStatus === 'error' && (
-        <div className="mt-2 text-xs text-red-600 flex items-center">
-          <FaExclamationTriangle className="mr-1" />
-          <span>Bakendi er í undirbúningi, prófaðu aftur síðar</span>
+      {/* Show action button when there's no data */}
+      {status === 'error' && !isSkraping && (
+        <div className="mt-2 flex items-center">
+          <button 
+            onClick={handleScrapeSample}
+            className="text-xs bg-blue-600 text-white px-2 py-1 rounded flex items-center"
+            disabled={isSkraping}
+          >
+            <FaSyncAlt className={`mr-1 ${isSkraping ? 'animate-spin' : ''}`} />
+            Sækja gögn (205/55R16)
+          </button>
+        </div>
+      )}
+      
+      {isSkraping && (
+        <div className="mt-2 text-xs text-blue-600">
+          Sækir gögn... Þetta getur tekið nokkrar mínútur.
         </div>
       )}
     </div>
