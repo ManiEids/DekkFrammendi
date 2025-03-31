@@ -5,6 +5,8 @@ import { Inter } from 'next/font/google';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { useState } from 'react';
+import ConnectionStatus from './components/ConnectionStatus';
+import Header from './components/Header';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,7 +32,11 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <QueryClientProvider client={queryClient}>
-          {children}
+          <Header />
+          <main className="container mx-auto px-4 py-6">
+            {children}
+          </main>
+          <ConnectionStatus />
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </body>

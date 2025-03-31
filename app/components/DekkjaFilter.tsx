@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { DekkFilter } from '../types';
 import { useStaerdir } from '../hooks/useDekkjaApi';
-import { FaFilter, FaChevronDown, FaChevronUp, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
+import { FaFilter, FaChevronDown, FaChevronUp, FaSortAmountDown, FaSortAmountUp, FaTimes } from 'react-icons/fa';
+import { WIDTHS, HEIGHTS, RIM_SIZES } from '../constants';
 
 interface DekkjaFilterProps {
   filter: DekkFilter;
@@ -17,18 +18,20 @@ export default function DekkjaFilter({
   const { data: staerdir, isLoading } = useStaerdir();
   const [isOpen, setIsOpen] = useState(true);
 
-  // Fix TypeScript error by avoiding spread on Set
-  const breiddir = staerdir 
+  // Get available widths - use API data if available, otherwise fallback to constants
+  const breiddir = staerdir && staerdir.length > 0
     ? Array.from(new Set(staerdir.map(s => s.breidd))).sort((a, b) => a - b)
-    : [];
+    : WIDTHS;
   
-  const haedir = staerdir
+  // Get available heights - use API data if available, otherwise fallback to constants
+  const haedir = staerdir && staerdir.length > 0
     ? Array.from(new Set(staerdir.map(s => s.haed))).sort((a, b) => a - b)
-    : [];
+    : HEIGHTS;
   
-  const felgur = staerdir
+  // Get available rim sizes - use API data if available, otherwise fallback to constants
+  const felgur = staerdir && staerdir.length > 0
     ? Array.from(new Set(staerdir.map(s => s.felga))).sort((a, b) => a - b)
-    : [];
+    : RIM_SIZES;
 
   // Handle sorting change
   const handleSortChange = (sortOrder: 'asc' | 'desc' | undefined) => {
@@ -37,6 +40,13 @@ export default function DekkjaFilter({
     } else {
       onFilterChange({ sortBy: 'verd', sortOrder });
     }
+  };
+
+  // Clear a specific dimension
+  const clearDimension = (dimension: string) => {
+    const newFilter = { ...filter };
+    delete newFilter[dimension as keyof DekkFilter];
+    onFilterChange(newFilter);
   };
 
   return (
@@ -56,55 +66,103 @@ export default function DekkjaFilter({
 
       <div className={`${isOpen ? 'block' : 'hidden'} lg:block space-y-4`}>
         {/* Width filter */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Breidd</label>
-          <select
-            className="w-full p-2 border rounded"
-            value={filter.breidd || ''}
-            onChange={(e) => onFilterChange({ breidd: e.target.value ? Number(e.target.value) : undefined })}
-            disabled={isLoading}
-          >
-            <option value="">Öll breidd</option>
-            {breiddir.map(b => (
-              <option key={b} value={b}>{b}</option>
-            ))}
-          </select>
+        <div className="border rounded-lg p-3">
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-sm font-medium">Breidd</label>
+            {filter.breidd !== undefined && (
+              <button
+                onClick={() => clearDimension('breidd')}
+                className="text-xs text-gray-500 hover:text-red-500 flex items-center"
+              >
+                Hreinsa <FaTimes className="ml-1" />
+              </button>
+            )}
+          </div>
+          {filter.breidd !== undefined ? (
+            <div className="bg-blue-100 px-3 py-2 rounded-lg font-medium">
+              {filter.breidd} mm
+            </div>
+          ) : (
+            <select
+              className="w-full p-2 border rounded"
+              value=""
+              onChange={(e) => onFilterChange({ breidd: e.target.value ? Number(e.target.value) : undefined })}
+              disabled={isLoading}
+            >
+              <option value="">Allar breiddir</option>
+              {breiddir.map(b => (
+                <option key={b} value={b}>{b} mm</option>
+              ))}
+            </select>
+          )}
         </div>
 
         {/* Height filter */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Hæð</label>
-          <select
-            className="w-full p-2 border rounded"
-            value={filter.haed || ''}
-            onChange={(e) => onFilterChange({ haed: e.target.value ? Number(e.target.value) : undefined })}
-            disabled={isLoading}
-          >
-            <option value="">Öll hæð</option>
-            {haedir.map(h => (
-              <option key={h} value={h}>{h}</option>
-            ))}
-          </select>
+        <div className="border rounded-lg p-3">
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-sm font-medium">Hæð</label>
+            {filter.haed !== undefined && (
+              <button
+                onClick={() => clearDimension('haed')}
+                className="text-xs text-gray-500 hover:text-red-500 flex items-center"
+              >
+                Hreinsa <FaTimes className="ml-1" />
+              </button>
+            )}
+          </div>
+          {filter.haed !== undefined ? (
+            <div className="bg-blue-100 px-3 py-2 rounded-lg font-medium">
+              {filter.haed}
+            </div>
+          ) : (
+            <select
+              className="w-full p-2 border rounded"
+              value=""
+              onChange={(e) => onFilterChange({ haed: e.target.value ? Number(e.target.value) : undefined })}
+              disabled={isLoading}
+            >
+              <option value="">Allar hæðir</option>
+              {haedir.map(h => (
+                <option key={h} value={h}>{h}</option>
+              ))}
+            </select>
+          )}
         </div>
 
         {/* Rim filter */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Felgustærð</label>
-          <select
-            className="w-full p-2 border rounded"
-            value={filter.felga || ''}
-            onChange={(e) => onFilterChange({ felga: e.target.value ? Number(e.target.value) : undefined })}
-            disabled={isLoading}
-          >
-            <option value="">Allar felgustærðir</option>
-            {felgur.map(f => (
-              <option key={f} value={f}>{f}</option>
-            ))}
-          </select>
+        <div className="border rounded-lg p-3">
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-sm font-medium">Felgustærð</label>
+            {filter.felga !== undefined && (
+              <button
+                onClick={() => clearDimension('felga')}
+                className="text-xs text-gray-500 hover:text-red-500 flex items-center"
+              >
+                Hreinsa <FaTimes className="ml-1" />
+              </button>
+            )}
+          </div>
+          {filter.felga !== undefined ? (
+            <div className="bg-blue-100 px-3 py-2 rounded-lg font-medium">
+              R{filter.felga}
+            </div>
+          ) : (
+            <select
+              className="w-full p-2 border rounded"
+              value=""
+              onChange={(e) => onFilterChange({ felga: e.target.value ? Number(e.target.value) : undefined })}
+              disabled={isLoading}
+            >
+              <option value="">Allar felgustærðir</option>
+              {felgur.map(f => (
+                <option key={f} value={f}>R{f}</option>
+              ))}
+            </select>
+          )}
         </div>
 
         {/* In stock filter */}
-        <div className="flex items-center">
+        <div className="flex items-center p-2">
           <input
             type="checkbox"
             id="inStock"
@@ -116,7 +174,7 @@ export default function DekkjaFilter({
         </div>
         
         {/* Sort by price */}
-        <div>
+        <div className="p-3 border rounded-lg">
           <label className="block text-sm font-medium mb-2">Raða eftir verði</label>
           <div className="flex gap-2">
             <button 
@@ -145,7 +203,7 @@ export default function DekkjaFilter({
           className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded"
           onClick={onClearFilters}
         >
-          Hreinsa síur
+          Hreinsa allar síur
         </button>
       </div>
     </div>
