@@ -11,7 +11,10 @@ const api = axios.create({
 });
 
 // Sample data to use when backend is unavailable
-const FALLBACK_DATA = {
+const FALLBACK_DATA: {
+  dekk: Dekk[];
+  staerdir: DekkStaerd[]; // Explicitly type this array
+} = {
   dekk: Array(15).fill(null).map((_, i) => ({
     id: i+1,
     titill: `Demo dekk ${i+1}`,
@@ -28,7 +31,7 @@ const FALLBACK_DATA = {
     skrad_thann: new Date().toISOString(),
     uppfaert_thann: new Date().toISOString()
   })),
-  staerdir: []
+  staerdir: [] as DekkStaerd[] // Initialize with correct type
 };
 
 // Generate fallback size data
