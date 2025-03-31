@@ -13,10 +13,21 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
   
   return (
     <html lang="is">
+      <head>
+        <title>Dekkjasafn - Dekkjaverð á einum stað</title>
+        <meta name="description" content="Finndu dekk á besta verðinu frá öllum helstu söluaðilum á Íslandi." />
+      </head>
       <body className={inter.className}>
         <QueryClientProvider client={queryClient}>
           {children}

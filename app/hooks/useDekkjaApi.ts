@@ -1,6 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { DekkFilter, DekkStaerd, Dekk } from '../types';
-import { fetchDekk, fetchStaerdir, fetchFramleideendur, fetchVefsidur, skrapaDekk } from '../lib/api';
+import { 
+  fetchDekk, 
+  fetchStaerdir, 
+  fetchFramleideendur, 
+  fetchVefsidur, 
+  skrapaDekk,
+  checkHealth 
+} from '../lib/api';
 
 export function useDekkja(filter: DekkFilter = {}) {
   return useQuery(
@@ -47,4 +54,11 @@ export function useSkrapa() {
       }
     }
   );
+}
+
+export function useApiHealth() {
+  return useQuery('apiHealth', checkHealth, {
+    refetchInterval: 60000, // Check API health every minute
+    retry: 3,
+  });
 }

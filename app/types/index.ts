@@ -25,6 +25,8 @@ export interface DekkFilter {
   hamarksVerd?: number;
   adeinsALager?: boolean;
   id?: number;
+  sortBy?: string; // For sorting results (e.g. 'verd')
+  sortOrder?: 'asc' | 'desc'; // Ascending or descending order
 }
 
 export interface DekkStaerd {

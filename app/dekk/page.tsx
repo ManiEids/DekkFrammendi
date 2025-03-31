@@ -102,6 +102,21 @@ export default function DekkjaListi() {
     return `Dekk í stærðinni ${parts.join("/")}`;
   };
 
+  // Format pricing info for display
+  const formatPriceInfo = () => {
+    if (!dekk || dekk.length === 0) return "";
+    
+    const pricesWithValues = dekk.filter(d => d.verd !== null).map(d => d.verd as number);
+    
+    if (pricesWithValues.length === 0) return "";
+    
+    const lowest = Math.min(...pricesWithValues);
+    const highest = Math.max(...pricesWithValues);
+    const formatter = new Intl.NumberFormat('is-IS');
+    
+    return `Verð frá ${formatter.format(lowest)} kr. til ${formatter.format(highest)} kr.`;
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
@@ -184,7 +199,12 @@ export default function DekkjaListi() {
           {/* Results grid */}
           {!isLoading && !isError && dekk && dekk.length > 0 && (
             <div>
-              <p className="mb-4 text-gray-600">{dekk.length} dekk fundust</p>
+              <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between">
+                <p className="text-gray-600">{dekk.length} dekk fundust</p>
+                {formatPriceInfo() && (
+                  <p className="text-gray-600 mt-1 md:mt-0">{formatPriceInfo()}</p>
+                )}
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {dekk.map((item) => (
                   <DekkjaKort

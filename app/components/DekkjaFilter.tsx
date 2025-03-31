@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DekkFilter } from '../types';
 import { useStaerdir } from '../hooks/useDekkjaApi';
-import { FaFilter, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaFilter, FaChevronDown, FaChevronUp, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 
 interface DekkjaFilterProps {
   filter: DekkFilter;
@@ -28,6 +28,15 @@ export default function DekkjaFilter({
   const felgur = staerdir
     ? [...new Set(staerdir.map(s => s.felga))].sort((a, b) => a - b)
     : [];
+
+  // Handle sorting change
+  const handleSortChange = (sortOrder: 'asc' | 'desc' | undefined) => {
+    if (!sortOrder) {
+      onFilterChange({ sortBy: undefined, sortOrder: undefined });
+    } else {
+      onFilterChange({ sortBy: 'verd', sortOrder });
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow p-4">
@@ -103,6 +112,31 @@ export default function DekkjaFilter({
             onChange={(e) => onFilterChange({ adeinsALager: e.target.checked })}
           />
           <label htmlFor="inStock">Aðeins á lager</label>
+        </div>
+        
+        {/* Sort by price */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Raða eftir verði</label>
+          <div className="flex gap-2">
+            <button 
+              className={`flex-1 p-2 border rounded flex items-center justify-center ${
+                filter.sortBy === 'verd' && filter.sortOrder === 'asc' 
+                  ? 'bg-blue-100 border-blue-500' : 'hover:bg-gray-100'
+              }`}
+              onClick={() => handleSortChange(filter.sortBy === 'verd' && filter.sortOrder === 'asc' ? undefined : 'asc')}
+            >
+              <FaSortAmountUp className="mr-1" /> Lægsta verð
+            </button>
+            <button 
+              className={`flex-1 p-2 border rounded flex items-center justify-center ${
+                filter.sortBy === 'verd' && filter.sortOrder === 'desc' 
+                  ? 'bg-blue-100 border-blue-500' : 'hover:bg-gray-100'
+              }`}
+              onClick={() => handleSortChange(filter.sortBy === 'verd' && filter.sortOrder === 'desc' ? undefined : 'desc')}
+            >
+              <FaSortAmountDown className="mr-1" /> Hæsta verð
+            </button>
+          </div>
         </div>
 
         {/* Clear filters button */}

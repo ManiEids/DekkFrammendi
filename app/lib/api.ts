@@ -16,27 +16,66 @@ export async function fetchDekk(filter: DekkFilter = {}): Promise<Dekk[]> {
   if (filter.lagmarksVerd !== undefined) params.append('lagmarksVerd', filter.lagmarksVerd.toString());
   if (filter.hamarksVerd !== undefined) params.append('hamarksVerd', filter.hamarksVerd.toString());
   if (filter.adeinsALager) params.append('adeinsALager', 'true');
+  if (filter.sortBy) params.append('sortBy', filter.sortBy);
+  if (filter.sortOrder) params.append('sortOrder', filter.sortOrder);
   
-  const response = await api.get<Dekk[]>(`/dekk?${params.toString()}`);
-  return response.data;
+  try {
+    const response = await api.get<Dekk[]>(`/dekk?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching tires:', error);
+    return [];
+  }
 }
 
 export async function fetchStaerdir(): Promise<DekkStaerd[]> {
-  const response = await api.get<DekkStaerd[]>('/staerdir');
-  return response.data;
+  try {
+    const response = await api.get<DekkStaerd[]>('/staerdir');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching sizes:', error);
+    return [];
+  }
 }
 
 export async function fetchFramleideendur(): Promise<string[]> {
-  const response = await api.get<string[]>('/framleideendur');
-  return response.data;
+  try {
+    // Fixed endpoint to match API documentation
+    const response = await api.get<string[]>('/framleidandi');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching manufacturers:', error);
+    return [];
+  }
 }
 
 export async function fetchVefsidur(): Promise<string[]> {
-  const response = await api.get<string[]>('/vefsidur');
-  return response.data;
+  try {
+    const response = await api.get<string[]>('/vefsidur');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching websites:', error);
+    return [];
+  }
 }
 
 export async function skrapaDekk(breidd: number, haed: number, felga: number): Promise<{skilabod: string}> {
-  const response = await api.post('/skrapa', { breidd, haed, felga });
-  return response.data;
+  try {
+    const response = await api.post('/skrapa', { breidd, haed, felga });
+    return response.data;
+  } catch (error) {
+    console.error('Error scraping tires:', error);
+    return { skilabod: 'Villa kom upp við að skrapa gögn' };
+  }
+}
+
+// Function to check API health
+export async function checkHealth(): Promise<boolean> {
+  try {
+    const response = await api.get('/heilsa');
+    return response.status === 200;
+  } catch (error) {
+    console.error('API health check failed:', error);
+    return false;
+  }
 }
