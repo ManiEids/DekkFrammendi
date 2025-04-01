@@ -162,3 +162,15 @@ export async function checkHealth(): Promise<boolean> {
     return false;
   }
 }
+
+// Added function to get last updated timestamp from backend
+export async function fetchLastUpdated(): Promise<string> {
+  try {
+    const response = await api.get<{ last_updated: string }>('/last_updated');
+    return response.data.last_updated;
+  } catch (error) {
+    console.error('Error fetching last updated:', error);
+    // Fallback: return current time if unavailable
+    return new Date().toISOString();
+  }
+}

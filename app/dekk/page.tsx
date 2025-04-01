@@ -17,14 +17,14 @@ export default function DekkjaListi() {
   
   // Get query params
   useEffect(() => {
-    const breidd = searchParams.get('breidd');
-    const haed = searchParams.get('haed');
-    const felga = searchParams.get('felga');
+    const width = searchParams.get('width');
+    const aspect_ratio = searchParams.get('aspect_ratio');
+    const rim_size = searchParams.get('rim_size');
     
     const newFilter: DekkFilter = {};
-    if (breidd) newFilter.breidd = parseInt(breidd);
-    if (haed) newFilter.haed = parseInt(haed);
-    if (felga) newFilter.felga = parseInt(felga);
+    if (width) newFilter.width = parseInt(width);
+    if (aspect_ratio) newFilter.aspect_ratio = parseInt(aspect_ratio);
+    if (rim_size) newFilter.rim_size = parseInt(rim_size);
     
     setFilter(newFilter);
   }, [searchParams]);
@@ -39,13 +39,13 @@ export default function DekkjaListi() {
   const handleClearFilters = () => {
     // Keep only initial search parameters from URL
     const initialFilter: DekkFilter = {};
-    const breidd = searchParams.get('breidd');
-    const haed = searchParams.get('haed');
-    const felga = searchParams.get('felga');
+    const width = searchParams.get('width');
+    const aspect_ratio = searchParams.get('aspect_ratio');
+    const rim_size = searchParams.get('rim_size');
     
-    if (breidd) initialFilter.breidd = parseInt(breidd);
-    if (haed) initialFilter.haed = parseInt(haed);
-    if (felga) initialFilter.felga = parseInt(felga);
+    if (width) initialFilter.width = parseInt(width);
+    if (aspect_ratio) initialFilter.aspect_ratio = parseInt(aspect_ratio);
+    if (rim_size) initialFilter.rim_size = parseInt(rim_size);
     
     setFilter(initialFilter);
   };
@@ -64,11 +64,11 @@ export default function DekkjaListi() {
   
   const handleSkrapa = () => {
     // Need at least one dimension to scrape
-    if (filter.breidd || filter.haed || filter.felga) {
+    if (filter.width || filter.aspect_ratio || filter.rim_size) {
       skrapa({ 
-        breidd: filter.breidd || 0, 
-        haed: filter.haed || 0, 
-        felga: filter.felga || 0
+        width: filter.width || 0, 
+        aspect_ratio: filter.aspect_ratio || 0, 
+        rim_size: filter.rim_size || 0
       });
       alert('Skrapaverkefni hafið! Þetta getur tekið nokkrar mínútur.');
     } else {
@@ -85,18 +85,18 @@ export default function DekkjaListi() {
 
   // Create title based on available filter dimensions
   const createSizeTitle = () => {
-    if (!filter.breidd && !filter.haed && !filter.felga) {
+    if (!filter.width && !filter.aspect_ratio && !filter.rim_size) {
       return "Öll dekk";
     }
     
     const parts = [];
-    if (filter.breidd) parts.push(`${filter.breidd}`);
+    if (filter.width) parts.push(`${filter.width}`);
     else parts.push("x");
     
-    if (filter.haed) parts.push(`${filter.haed}`);
+    if (filter.aspect_ratio) parts.push(`${filter.aspect_ratio}`);
     else parts.push("x");
     
-    if (filter.felga) parts.push(`R${filter.felga}`);
+    if (filter.rim_size) parts.push(`R${filter.rim_size}`);
     else parts.push("Rx");
     
     return `Dekk í stærðinni ${parts.join("/")}`;
@@ -132,7 +132,7 @@ export default function DekkjaListi() {
         <button 
           className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full md:w-auto"
           onClick={handleSkrapa}
-          disabled={isSkraping || (!filter.breidd && !filter.haed && !filter.felga)}
+          disabled={isSkraping || (!filter.width && !filter.aspect_ratio && !filter.rim_size)}
         >
           <FaSyncAlt className={`mr-2 ${isSkraping ? 'animate-spin' : ''}`} />
           {isSkraping ? 'Skrapar...' : 'Skrapa nýjustu gögn'}
@@ -189,7 +189,7 @@ export default function DekkjaListi() {
               <button
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
                 onClick={handleSkrapa}
-                disabled={!filter.breidd && !filter.haed && !filter.felga}
+                disabled={!filter.width && !filter.aspect_ratio && !filter.rim_size}
               >
                 Skrapa nýjustu gögn
               </button>

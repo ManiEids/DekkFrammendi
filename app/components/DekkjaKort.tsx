@@ -48,7 +48,9 @@ export default function DekkjaKort({ dekk, onAddToSamanburdur, isSelected }: Dek
             <div className="text-sm font-semibold text-blue-600">
               {dekk.upprunaSida}
             </div>
-            <span className="text-sm text-gray-500">{dekk.dekkStaerd}</span>
+            <span className="text-sm text-gray-500">
+              {`${dekk.width}/${dekk.aspect_ratio}R${dekk.rim_size}`}
+            </span>
           </div>
           
           <h3 className="font-semibold mb-1">{dekk.titill}</h3>

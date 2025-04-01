@@ -20,17 +20,17 @@ export default function DekkjaFilter({
 
   // Get available widths - use API data if available, otherwise fallback to constants
   const breiddir = staerdir && staerdir.length > 0
-    ? Array.from(new Set(staerdir.map(s => s.breidd))).sort((a, b) => a - b)
+    ? Array.from(new Set(staerdir.map(s => s.width))).sort((a, b) => a - b)
     : WIDTHS;
   
   // Get available heights - use API data if available, otherwise fallback to constants
   const haedir = staerdir && staerdir.length > 0
-    ? Array.from(new Set(staerdir.map(s => s.haed))).sort((a, b) => a - b)
+    ? Array.from(new Set(staerdir.map(s => s.aspect_ratio))).sort((a, b) => a - b)
     : HEIGHTS;
   
   // Get available rim sizes - use API data if available, otherwise fallback to constants
   const felgur = staerdir && staerdir.length > 0
-    ? Array.from(new Set(staerdir.map(s => s.felga))).sort((a, b) => a - b)
+    ? Array.from(new Set(staerdir.map(s => s.rim_size))).sort((a, b) => a - b)
     : RIM_SIZES;
 
   // Handle sorting change
@@ -69,24 +69,24 @@ export default function DekkjaFilter({
         <div className="border rounded-lg p-3">
           <div className="flex justify-between items-center mb-2">
             <label className="text-sm font-medium">Breidd</label>
-            {filter.breidd !== undefined && (
+            {filter.width !== undefined && (
               <button
-                onClick={() => clearDimension('breidd')}
+                onClick={() => clearDimension('width')}
                 className="text-xs text-gray-500 hover:text-red-500 flex items-center"
               >
                 Hreinsa <FaTimes className="ml-1" />
               </button>
             )}
           </div>
-          {filter.breidd !== undefined ? (
+          {filter.width !== undefined ? (
             <div className="bg-blue-100 px-3 py-2 rounded-lg font-medium">
-              {filter.breidd} mm
+              {filter.width} mm
             </div>
           ) : (
             <select
               className="w-full p-2 border rounded"
               value=""
-              onChange={(e) => onFilterChange({ breidd: e.target.value ? Number(e.target.value) : undefined })}
+              onChange={(e) => onFilterChange({ width: e.target.value ? Number(e.target.value) : undefined })}
               disabled={isLoading}
             >
               <option value="">Allar breiddir</option>
@@ -101,24 +101,24 @@ export default function DekkjaFilter({
         <div className="border rounded-lg p-3">
           <div className="flex justify-between items-center mb-2">
             <label className="text-sm font-medium">Hæð</label>
-            {filter.haed !== undefined && (
+            {filter.aspect_ratio !== undefined && (
               <button
-                onClick={() => clearDimension('haed')}
+                onClick={() => clearDimension('aspect_ratio')}
                 className="text-xs text-gray-500 hover:text-red-500 flex items-center"
               >
                 Hreinsa <FaTimes className="ml-1" />
               </button>
             )}
           </div>
-          {filter.haed !== undefined ? (
+          {filter.aspect_ratio !== undefined ? (
             <div className="bg-blue-100 px-3 py-2 rounded-lg font-medium">
-              {filter.haed}
+              {filter.aspect_ratio}
             </div>
           ) : (
             <select
               className="w-full p-2 border rounded"
               value=""
-              onChange={(e) => onFilterChange({ haed: e.target.value ? Number(e.target.value) : undefined })}
+              onChange={(e) => onFilterChange({ aspect_ratio: e.target.value ? Number(e.target.value) : undefined })}
               disabled={isLoading}
             >
               <option value="">Allar hæðir</option>
@@ -133,24 +133,24 @@ export default function DekkjaFilter({
         <div className="border rounded-lg p-3">
           <div className="flex justify-between items-center mb-2">
             <label className="text-sm font-medium">Felgustærð</label>
-            {filter.felga !== undefined && (
+            {filter.rim_size !== undefined && (
               <button
-                onClick={() => clearDimension('felga')}
+                onClick={() => clearDimension('rim_size')}
                 className="text-xs text-gray-500 hover:text-red-500 flex items-center"
               >
                 Hreinsa <FaTimes className="ml-1" />
               </button>
             )}
           </div>
-          {filter.felga !== undefined ? (
+          {filter.rim_size !== undefined ? (
             <div className="bg-blue-100 px-3 py-2 rounded-lg font-medium">
-              R{filter.felga}
+              R{filter.rim_size}
             </div>
           ) : (
             <select
               className="w-full p-2 border rounded"
               value=""
-              onChange={(e) => onFilterChange({ felga: e.target.value ? Number(e.target.value) : undefined })}
+              onChange={(e) => onFilterChange({ rim_size: e.target.value ? Number(e.target.value) : undefined })}
               disabled={isLoading}
             >
               <option value="">Allar felgustærðir</option>

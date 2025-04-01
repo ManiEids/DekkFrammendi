@@ -6,7 +6,8 @@ import {
   fetchFramleideendur, 
   fetchVefsidur, 
   skrapaDekk,
-  checkHealth 
+  checkHealth,
+  fetchLastUpdated
 } from '../lib/api';
 
 export function useDekkja(filter: DekkFilter = {}) {
@@ -82,5 +83,13 @@ export function useApiHealth() {
     refetchInterval: 60000, // Check API health every minute
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
+}
+
+// Added hook to fetch last updated timestamp
+export function useLastUpdated() {
+  return useQuery('lastUpdated', fetchLastUpdated, {
+    staleTime: 60 * 1000, // 1 minute
+    retry: 2,
   });
 }
