@@ -9,12 +9,12 @@ interface DekkjaFilterProps {
 
 export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }: DekkjaFilterProps) {
   return (
-    <div className="bg-white rounded-lg shadow p-4 space-y-4">
+    <div className="search-container">
       {/* Breidd dropdown */}
-      <div>
-        <label className="block text-sm font-medium mb-1">Breidd</label>
+      <div className="mb-4">
+        <label className="form-label">Breidd</label>
         <select
-          className="w-full p-2 border rounded"
+          className="form-select"
           value={filter.width ?? ""}
           onChange={(e) => onFilterChange({ width: e.target.value ? Number(e.target.value) : undefined })}
         >
@@ -26,11 +26,12 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
           ))}
         </select>
       </div>
+      
       {/* Hæð dropdown */}
-      <div>
-        <label className="block text-sm font-medium mb-1">Hæð</label>
+      <div className="mb-4">
+        <label className="form-label">Hæð</label>
         <select
-          className="w-full p-2 border rounded"
+          className="form-select"
           value={filter.aspect_ratio ?? ""}
           onChange={(e) => onFilterChange({ aspect_ratio: e.target.value ? Number(e.target.value) : undefined })}
         >
@@ -42,11 +43,12 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
           ))}
         </select>
       </div>
+      
       {/* Felgustærð dropdown */}
-      <div>
-        <label className="block text-sm font-medium mb-1">Felgustærð</label>
+      <div className="mb-4">
+        <label className="form-label">Felgustærð</label>
         <select
-          className="w-full p-2 border rounded"
+          className="form-select"
           value={filter.rim_size ?? ""}
           onChange={(e) => onFilterChange({ rim_size: e.target.value ? Number(e.target.value) : undefined })}
         >
@@ -58,10 +60,14 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
           ))}
         </select>
       </div>
+      
       {/* Clear button */}
       {onClearFilters && (
         <div>
-          <button onClick={onClearFilters} className="w-full py-2 px-4 rounded bg-gray-200 text-gray-700">
+          <button 
+            onClick={onClearFilters} 
+            className="w-full py-2 px-4 rounded text-white bg-gray-600 hover:bg-gray-700 transition"
+          >
             Hreinsa síur
           </button>
         </div>

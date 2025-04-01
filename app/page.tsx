@@ -71,14 +71,16 @@ export default function Forsida() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 space-bg">
       <div className="flex justify-between mb-8">
-        <Link href="/" className="flex items-center text-blue-600 hover:underline">
+        <Link href="/" className="flex items-center text-white hover:text-accent-color">
           <FaArrowLeft className="mr-2" /> Forsíða
         </Link>
       </div>
 
-      <h1 className="text-3xl font-bold mb-6 text-center">Finndu bestu dekkin</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-white">
+        Finndu bestu dekkin
+      </h1>
       
       {/* Last updated info and tire count */}
       {lastUpdate && (
@@ -95,27 +97,29 @@ export default function Forsida() {
         </div>
       )}
 
-      {/* Search form using dropdown filters */}
-      <DekkjaFilter 
-        filter={filter} 
-        onFilterChange={handleFilterChange} 
-        onClearFilters={handleClearFilters}
-      />
-      
-      <div className="mt-6 text-center">
-        <button 
-          onClick={handleLeit}
-          disabled={!filter.width && !filter.aspect_ratio && !filter.rim_size}
-          className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
-        >
-          <FaSearch className="mr-2 inline-block" /> Leita að dekkjum
-        </button>
+      {/* Updated search form container with improved contrast */}
+      <div className="mb-8 max-w-lg mx-auto">
+        <DekkjaFilter 
+          filter={filter} 
+          onFilterChange={handleFilterChange} 
+          onClearFilters={handleClearFilters}
+        />
+        
+        <div className="mt-6 text-center">
+          <button 
+            onClick={handleLeit}
+            disabled={!filter.width && !filter.aspect_ratio && !filter.rim_size}
+            className="btn-primary w-full"
+          >
+            <FaSearch className="mr-2 inline-block" /> Leita að dekkjum
+          </button>
+        </div>
       </div>
       
-      {/* Display results status (optional) */}
-      {isLoading && <div className="mt-6 text-center">Hleður gögnum…</div>}
-      {isError && <div className="mt-6 text-center text-red-600">Villa við að sækja gögn.</div>}
-      {dekk && dekk.length === 0 && !isLoading && <div className="mt-6 text-center">Engin dekk fundust.</div>}
+      {/* Display results status with improved visibility */}
+      {isLoading && <div className="mt-6 text-center text-white">Hleður gögnum…</div>}
+      {isError && <div className="mt-6 text-center text-error">Villa við að sækja gögn.</div>}
+      {dekk && dekk.length === 0 && !isLoading && <div className="mt-6 text-center text-warning">Engin dekk fundust.</div>}
     </div>
   );
 }
