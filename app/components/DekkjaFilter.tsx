@@ -167,8 +167,8 @@ export default function DekkjaFilter({
             type="checkbox"
             id="inStock"
             className="mr-2"
-            checked={filter.adeinsALager || false}
-            onChange={(e) => onFilterChange({ adeinsALager: e.target.checked })}
+            checked={filter.inStock || false}  // using inStock now
+            onChange={(e) => onFilterChange({ inStock: e.target.checked })}
           />
           <label htmlFor="inStock">Aðeins á lager</label>
         </div>

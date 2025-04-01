@@ -31,7 +31,19 @@ export default function Samanburdur() {
         const results = await Promise.all(promises);
         // Flatten the results as fetchDekk returns an array
         const allDekk = results.flatMap(result => result);
-        setDekk(allDekk);
+        // Ensure the returned objects adhere to the new schema
+        const formattedDekk = allDekk.map(d => ({
+          id: d.id,
+          product_name: d.product_name,
+          manufacturer: d.manufacturer,
+          size: d.size,
+          price: d.price,
+          stock_status: d.stock_status,
+          stock_count: d.stock_count,
+          image_url: d.image_url,
+          source: d.source,
+        }));
+        setDekk(formattedDekk);
       } catch (err) {
         setError('Villa kom upp við að sækja dekk');
         console.error(err);
@@ -125,10 +137,10 @@ export default function Samanburdur() {
               {dekk.map(d => (
                 <td key={d.id} className="p-4 border-b text-center">
                   <div className="relative h-40 w-full">
-                    {d.mynd_url ? (
+                    {d.image_url ? (
                       <Image
-                        src={d.mynd_url}
-                        alt={d.titill}
+                        src={d.image_url}
+                        alt={d.product_name}
                         fill
                         className="object-contain"
                         sizes="(max-width: 768px) 100vw, 33vw"
@@ -147,7 +159,7 @@ export default function Samanburdur() {
             <tr>
               <td className="p-4 border-b font-semibold">Nafn</td>
               {dekk.map(d => (
-                <td key={d.id} className="p-4 border-b text-center">{d.titill}</td>
+                <td key={d.id} className="p-4 border-b text-center">{d.product_name}</td>
               ))}
             </tr>
 
@@ -155,7 +167,7 @@ export default function Samanburdur() {
             <tr>
               <td className="p-4 border-b font-semibold">Framleiðandi</td>
               {dekk.map(d => (
-                <td key={d.id} className="p-4 border-b text-center">{d.framleiddAf || 'Óþekkt'}</td>
+                <td key={d.id} className="p-4 border-b text-center">{d.manufacturer || 'Óþekkt'}</td>
               ))}
             </tr>
 
@@ -163,7 +175,7 @@ export default function Samanburdur() {
             <tr>
               <td className="p-4 border-b font-semibold">Stærð</td>
               {dekk.map(d => (
-                <td key={d.id} className="p-4 border-b text-center">{d.dekkStaerd}</td>
+                <td key={d.id} className="p-4 border-b text-center">{d.size}</td>
               ))}
             </tr>
 
@@ -172,7 +184,7 @@ export default function Samanburdur() {
               <td className="p-4 border-b font-semibold">Verð</td>
               {dekk.map(d => (
                 <td key={d.id} className="p-4 border-b text-center font-bold">
-                  {formatPrice(d.verd)}
+                  {formatPrice(d.price)}
                 </td>
               ))}
             </tr>
@@ -184,12 +196,12 @@ export default function Samanburdur() {
                 <td key={d.id} className="p-4 border-b text-center">
                   <span 
                     className={`px-2 py-1 rounded text-sm ${
-                      d.birgdaStada?.toLowerCase().includes('stock') || d.birgdaStada?.toLowerCase().includes('til í')
+                      d.stock_status?.toLowerCase().includes('stock') || d.stock_status?.toLowerCase().includes('til í')
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
                     }`}
                   >
-                    {getStockStatus(d.birgdaStada, d.fjoldiALager)}
+                    {getStockStatus(d.stock_status, d.stock_count)}
                   </span>
                 </td>
               ))}
@@ -199,7 +211,7 @@ export default function Samanburdur() {
             <tr>
               <td className="p-4 border-b font-semibold">Söluaðili</td>
               {dekk.map(d => (
-                <td key={d.id} className="p-4 border-b text-center">{d.upprunaSida}</td>
+                <td key={d.id} className="p-4 border-b text-center">{d.source}</td>
               ))}
             </tr>
           </tbody>

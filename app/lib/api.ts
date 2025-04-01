@@ -10,75 +10,62 @@ const api = axios.create({
   timeout: 30000, // 30 seconds timeout
 });
 
-// Sample data to use when backend is unavailable
+// Update FALLBACK_DATA to use new fields
 const FALLBACK_DATA: {
   dekk: Dekk[];
-  staerdir: DekkStaerd[]; // Explicitly type this array
+  staerdir: DekkStaerd[];
 } = {
   dekk: Array(15).fill(null).map((_, i) => ({
-    id: i+1,
-    titill: `Demo dekk ${i+1}`,
-    framleiddAf: ['Michelin', 'Continental', 'Pirelli', 'Bridgestone', 'Goodyear'][i % 5],
-    dekkStaerd: `${[205, 215, 225][i % 3]}/${[55, 60, 65][i % 3]}R${[16, 17, 18][i % 3]}`,
-    breidd: [205, 215, 225][i % 3],
-    haed: [55, 60, 65][i % 3],
-    felga: [16, 17, 18][i % 3],
-    verd: 20000 + Math.floor(Math.random() * 30000),
-    birgdaStada: i % 3 === 0 ? null : i % 2 === 0 ? 'In Stock' : 'Out of Stock',
-    fjoldiALager: i % 3 === 0 ? null : i % 2 === 0 ? Math.floor(Math.random() * 10) : 0,
-    mynd_url: null,
-    upprunaSida: ['N1', 'Dekkjahollin', 'Nesdekk'][i % 3],
-    skrad_thann: new Date().toISOString(),
-    uppfaert_thann: new Date().toISOString()
+    id: i + 1,
+    seller: ['Seller1', 'Seller2', 'Seller3'][i % 3],
+    manufacturer: ['Michelin', 'Continental', 'Pirelli', 'Bridgestone', 'Goodyear'][i % 5],
+    product_name: `Demo vöru ${i + 1}`,
+    width: [205, 215, 225][i % 3],
+    aspect_ratio: [55, 60, 65][i % 3],
+    rim_size: [16, 17, 18][i % 3],
+    price: 20000 + Math.floor(Math.random() * 30000),
+    stock: i % 3 === 0 ? 'Out of Stock' : 'In Stock',
+    inventory_count: i % 3 === 0 ? 0 : Math.floor(Math.random() * 10),
+    picture: null,
   })),
-  staerdir: [] as DekkStaerd[] // Initialize with correct type
+  staerdir: [] as DekkStaerd[],
 };
 
-// Generate fallback size data
-for (const breidd of [175, 185, 195, 205, 215, 225, 235]) {
-  for (const haed of [50, 55, 60, 65, 70]) {
-    for (const felga of [15, 16, 17, 18]) {
-      FALLBACK_DATA.staerdir.push({ breidd, haed, felga });
+// Generate fallback size data using new keys
+for (const w of [175, 185, 195, 205, 215, 225, 235]) {
+  for (const ar of [50, 55, 60, 65, 70]) {
+    for (const rs of [15, 16, 17, 18]) {
+      FALLBACK_DATA.staerdir.push({ width: w, aspect_ratio: ar, rim_size: rs });
     }
   }
 }
 
 export async function fetchDekk(filter: DekkFilter = {}): Promise<Dekk[]> {
   const params = new URLSearchParams();
-  
+
   if (filter.id) params.append('id', filter.id.toString());
-  if (filter.breidd) params.append('breidd', filter.breidd.toString());
-  if (filter.haed) params.append('haed', filter.haed.toString());
-  if (filter.felga) params.append('felga', filter.felga.toString());
-  if (filter.framleiddAf) params.append('framleiddAf', filter.framleiddAf);
-  if (filter.upprunaSida) params.append('upprunaSida', filter.upprunaSida);
-  if (filter.lagmarksVerd !== undefined) params.append('lagmarksVerd', filter.lagmarksVerd.toString());
-  if (filter.hamarksVerd !== undefined) params.append('hamarksVerd', filter.hamarksVerd.toString());
-  if (filter.adeinsALager) params.append('adeinsALager', 'true');
+  if (filter.width) params.append('width', filter.width.toString());
+  if (filter.aspect_ratio) params.append('aspect_ratio', filter.aspect_ratio.toString());
+  if (filter.rim_size) params.append('rim_size', filter.rim_size.toString());
+  if (filter.manufacturer) params.append('manufacturer', filter.manufacturer);
+  if (filter.seller) params.append('seller', filter.seller);
+  if (filter.product_name) params.append('product_name', filter.product_name);
+  if (filter.minPrice !== undefined) params.append('minPrice', filter.minPrice.toString());
+  if (filter.maxPrice !== undefined) params.append('maxPrice', filter.maxPrice.toString());
+  if (filter.inStock) params.append('inStock', 'true');
   if (filter.sortBy) params.append('sortBy', filter.sortBy);
   if (filter.sortOrder) params.append('sortOrder', filter.sortOrder);
-  
+
   try {
     const response = await api.get<Dekk[]>(`/dekk?${params.toString()}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching tires:', error);
-    // Return fallback data filtered according to the filter parameters
     let fallbackDekk = [...FALLBACK_DATA.dekk];
-    
-    if (filter.id) {
-      fallbackDekk = fallbackDekk.filter(d => d.id === filter.id);
-    }
-    if (filter.breidd) {
-      fallbackDekk = fallbackDekk.filter(d => d.breidd === filter.breidd);
-    }
-    if (filter.haed) {
-      fallbackDekk = fallbackDekk.filter(d => d.haed === filter.haed);
-    }
-    if (filter.felga) {
-      fallbackDekk = fallbackDekk.filter(d => d.felga === filter.felga);
-    }
-    
+    if (filter.id) fallbackDekk = fallbackDekk.filter(d => d.id === filter.id);
+    if (filter.width) fallbackDekk = fallbackDekk.filter(d => d.width === filter.width);
+    if (filter.aspect_ratio) fallbackDekk = fallbackDekk.filter(d => d.aspect_ratio === filter.aspect_ratio);
+    if (filter.rim_size) fallbackDekk = fallbackDekk.filter(d => d.rim_size === filter.rim_size);
     return fallbackDekk;
   }
 }
@@ -93,18 +80,18 @@ export async function fetchStaerdir(): Promise<DekkStaerd[]> {
     const staerdir: DekkStaerd[] = [];
     
     // Create a set of common tire sizes from constants
-    WIDTHS.forEach(breidd => {
-      HEIGHTS.forEach(haed => {
-        RIM_SIZES.forEach(felga => {
+    WIDTHS.forEach(width => {
+      HEIGHTS.forEach(aspect_ratio => {
+        RIM_SIZES.forEach(rim_size => {
           // Only include common combinations to keep the list reasonable
-          if ((breidd === 195 && haed === 65 && felga === 15) ||
-              (breidd === 205 && haed === 55 && felga === 16) ||
-              (breidd === 225 && haed === 45 && felga === 17) ||
+          if ((width === 195 && aspect_ratio === 65 && rim_size === 15) ||
+              (width === 205 && aspect_ratio === 55 && rim_size === 16) ||
+              (width === 225 && aspect_ratio === 45 && rim_size === 17) ||
               // Add more common combinations
-              ([175, 185, 195, 205, 215, 225, 235].includes(breidd) && 
-               [45, 50, 55, 60, 65].includes(haed) && 
-               [15, 16, 17, 18].includes(felga))) {
-            staerdir.push({ breidd, haed, felga });
+              ([175, 185, 195, 205, 215, 225, 235].includes(width) && 
+               [45, 50, 55, 60, 65].includes(aspect_ratio) && 
+               [15, 16, 17, 18].includes(rim_size))) {
+            staerdir.push({ width, aspect_ratio, rim_size });
           }
         });
       });
@@ -134,9 +121,9 @@ export async function fetchVefsidur(): Promise<string[]> {
   }
 }
 
-export async function skrapaDekk(breidd: number, haed: number, felga: number): Promise<{skilabod: string}> {
+export async function skrapaDekk(width: number, aspect_ratio: number, rim_size: number): Promise<{skilabod: string}> {
   try {
-    const response = await api.post('/skrapa', { breidd, haed, felga });
+    const response = await api.post('/skrapa', { width, aspect_ratio, rim_size });
     return response.data;
   } catch (error) {
     console.error('Error scraping tires:', error);
