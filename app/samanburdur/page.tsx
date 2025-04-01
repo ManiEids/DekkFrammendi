@@ -8,10 +8,13 @@ import { FaArrowLeft, FaTimes, FaCar } from 'react-icons/fa';
 import { fetchDekk } from '../lib/api';
 import { Dekk } from '../types';
 
+// Extend Dekk with computed field "size"
+type ComparisonDekk = Dekk & { size: string };
+
 export default function Samanburdur() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [dekk, setDekk] = useState<Dekk[]>([]);
+  const [dekk, setDekk] = useState<ComparisonDekk[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,17 +34,10 @@ export default function Samanburdur() {
         const results = await Promise.all(promises);
         // Flatten the results as fetchDekk returns an array
         const allDekk = results.flatMap(result => result);
-        // Ensure the returned objects adhere to the new schema
+        // Extend each Dekk with computed "size" field
         const formattedDekk = allDekk.map(d => ({
-          id: d.id,
-          product_name: d.product_name,
-          manufacturer: d.manufacturer,
-          size: `${d.width}/${d.aspect_ratio}R${d.rim_size}`, // compute size from fields
-          price: d.price,
-          stock_status: d.stock,          // using stock instead of stock_status
-          stock_count: d.inventory_count, // using inventory_count
-          image_url: d.picture,           // using picture
-          source: d.seller,               // using seller
+          ...d,
+          size: `${d.width}/${d.aspect_ratio}R${d.rim_size}`,
         }));
         setDekk(formattedDekk);
       } catch (err) {
@@ -60,9 +56,9 @@ export default function Samanburdur() {
     return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} kr`;
   };
 
-  const getStockStatus = (status: string | null, count: number | null) => {
-    if (!status) return 'Birgðastaða óþekkt';
-    if (status.toLowerCase().includes('in stock') || status.toLowerCase().includes('til í')) {
+  const getStockStatus = (stock: string | null, count: number | null) => {
+    if (!stock) return 'Birgðastaða óþekkt';
+    if (stock.toLowerCase().includes('in stock') || stock.toLowerCase().includes('til í')) {
       return 'Á lager' + (count ? `: ${count} stk` : '');
     }
     return 'Ekki á lager';
@@ -137,9 +133,9 @@ export default function Samanburdur() {
               {dekk.map(d => (
                 <td key={d.id} className="p-4 border-b text-center">
                   <div className="relative h-40 w-full">
-                    {d.image_url ? (
+                    {d.picture ? (
                       <Image
-                        src={d.image_url}
+                        src={d.picture}
                         alt={d.product_name}
                         fill
                         className="object-contain"
@@ -196,12 +192,12 @@ export default function Samanburdur() {
                 <td key={d.id} className="p-4 border-b text-center">
                   <span 
                     className={`px-2 py-1 rounded text-sm ${
-                      d.stock_status?.toLowerCase().includes('stock') || d.stock_status?.toLowerCase().includes('til í')
+                      d.stock.toLowerCase().includes('in stock') || d.stock.toLowerCase().includes('til í')
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
                     }`}
                   >
-                    {getStockStatus(d.stock_status, d.stock_count)}
+                    {getStockStatus(d.stock, d.inventory_count)}
                   </span>
                 </td>
               ))}
@@ -211,7 +207,7 @@ export default function Samanburdur() {
             <tr>
               <td className="p-4 border-b font-semibold">Söluaðili</td>
               {dekk.map(d => (
-                <td key={d.id} className="p-4 border-b text-center">{d.source}</td>
+                <td key={d.id} className="p-4 border-b text-center">{d.seller}</td>
               ))}
             </tr>
           </tbody>
