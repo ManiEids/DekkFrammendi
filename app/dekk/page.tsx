@@ -91,7 +91,7 @@ export default function DekkjaListi() {
   const formatPriceInfo = () => {
     if (!dekk || dekk.length === 0) return "";
     
-    const pricesWithValues = dekk.filter(d => d.verd !== null).map(d => d.verd as number);
+    const pricesWithValues = dekk.filter(d => d.price !== null).map(d => d.price);
     
     if (pricesWithValues.length === 0) return "";
     
