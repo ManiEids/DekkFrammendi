@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useDekkja, useSkrapa } from '../hooks/useDekkjaApi';
+import { useDekkja } from '../hooks/useDekkjaApi';
 import { DekkFilter, Dekk } from '../types';
 import DekkjaKort from '../components/DekkjaKort';
 import DekkjaFilter from '../components/DekkjaFilter';
 import Link from 'next/link';
-import { FaArrowLeft, FaSyncAlt } from 'react-icons/fa';
+import { FaArrowLeft } from 'react-icons/fa';
 
 export default function DekkjaListi() {
   const searchParams = useSearchParams();
@@ -30,7 +30,6 @@ export default function DekkjaListi() {
   }, [searchParams]);
   
   const { data: dekk, isLoading, isError } = useDekkja(filter);
-  const { mutate: skrapa, isLoading: isSkraping } = useSkrapa();
   
   const handleFilterChange = (newFilter: DekkFilter) => {
     setFilter({ ...filter, ...newFilter });
@@ -59,20 +58,6 @@ export default function DekkjaListi() {
       } else {
         alert('Þú getur aðeins borið saman 4 dekk í einu!');
       }
-    }
-  };
-  
-  const handleSkrapa = () => {
-    // Need at least one dimension to scrape
-    if (filter.width || filter.aspect_ratio || filter.rim_size) {
-      skrapa({ 
-        width: filter.width || 0, 
-        aspect_ratio: filter.aspect_ratio || 0, 
-        rim_size: filter.rim_size || 0
-      });
-      alert('Skrapaverkefni hafið! Þetta getur tekið nokkrar mínútur.');
-    } else {
-      alert('Þú þarft að velja að minnsta kosti eina stærð til að skrapa!');
     }
   };
   
@@ -128,17 +113,6 @@ export default function DekkjaListi() {
         </h1>
       </div>
 
-      <div className="mb-6">
-        <button 
-          className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full md:w-auto"
-          onClick={handleSkrapa}
-          disabled={isSkraping || (!filter.width && !filter.aspect_ratio && !filter.rim_size)}
-        >
-          <FaSyncAlt className={`mr-2 ${isSkraping ? 'animate-spin' : ''}`} />
-          {isSkraping ? 'Skrapar...' : 'Skrapa nýjustu gögn'}
-        </button>
-      </div>
-
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Filter panel */}
         <div className="w-full lg:w-64">
@@ -186,13 +160,6 @@ export default function DekkjaListi() {
           {!isLoading && !isError && dekk?.length === 0 && (
             <div className="bg-yellow-50 p-6 rounded-lg text-center">
               <p className="text-lg mb-4">Engin dekk fundust sem passa við þessar síur.</p>
-              <button
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                onClick={handleSkrapa}
-                disabled={!filter.width && !filter.aspect_ratio && !filter.rim_size}
-              >
-                Skrapa nýjustu gögn
-              </button>
             </div>
           )}
 

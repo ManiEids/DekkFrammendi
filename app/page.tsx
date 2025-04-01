@@ -206,12 +206,12 @@ export default function Forsida() {
           )}
           
           <button 
-            className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center"
-            disabled={!hasSelection || isLoading}
+            className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition flex items-center justify-center"
+            disabled={!hasSelection}
             onClick={handleLeit}
           >
             <FaSearch className="mr-2" />
-            {isLoading ? 'Hleður...' : 'Leita að dekkjum'}
+            Leita að dekkjum
           </button>
         </div>
       </div>
