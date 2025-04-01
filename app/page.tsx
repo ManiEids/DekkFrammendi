@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useStaerdir, useLastUpdated } from './hooks/useDekkjaApi';
+import { useStaerdir } from './hooks/useDekkjaApi';
 import { DekkStaerd } from './types';
 import { WIDTHS, HEIGHTS, RIM_SIZES } from './constants';
 import { FaSearch, FaTimes } from 'react-icons/fa';
@@ -10,7 +10,6 @@ import { FaSearch, FaTimes } from 'react-icons/fa';
 export default function Forsida() {
   const router = useRouter();
   const { data: staerdir, isLoading } = useStaerdir();
-  const { data: lastUpdated, isLoading: lastUpdatedLoading } = useLastUpdated();
 
   const [valinStaerd, setValinStaerd] = useState<DekkStaerd>({
     width: 0,
@@ -18,12 +17,10 @@ export default function Forsida() {
     rim_size: 0
   });
 
-  // Get available dimension arrays from API or constants
   const breiddir = staerdir?.length ? Array.from(new Set(staerdir.map(s => s.width))).sort((a, b) => a - b) : WIDTHS;
   const haedir = staerdir?.length ? Array.from(new Set(staerdir.map(s => s.aspect_ratio))).sort((a, b) => a - b) : HEIGHTS;
   const felgur = staerdir?.length ? Array.from(new Set(staerdir.map(s => s.rim_size))).sort((a, b) => a - b) : RIM_SIZES;
 
-  // Clear a specific dimension
   const clearDimension = (dimension: keyof DekkStaerd) => {
     setValinStaerd({
       ...valinStaerd,
@@ -32,7 +29,6 @@ export default function Forsida() {
   };
 
   const handleLeit = () => {
-    // Create URL with only the specified parameters (ignore 0 values)
     const params = new URLSearchParams();
     if (valinStaerd.width > 0) params.append('width', valinStaerd.width.toString());
     if (valinStaerd.aspect_ratio > 0) params.append('aspect_ratio', valinStaerd.aspect_ratio.toString());
@@ -41,20 +37,12 @@ export default function Forsida() {
     router.push(`/dekk?${params.toString()}`);
   };
 
-  // Check if at least one dimension is selected
   const hasSelection = valinStaerd.width > 0 || valinStaerd.aspect_ratio > 0 || valinStaerd.rim_size > 0;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh]">
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6">
         <h1 className="text-3xl font-bold mb-6 text-center">Finndu bestu dekkin</h1>
-        <div className="mb-4 text-center text-sm text-gray-600">
-          {lastUpdatedLoading ? (
-            <span>Uppfærsla í gangi...</span>
-          ) : (
-            <span>Gögnum síðast uppfærð: {new Date(lastUpdated).toLocaleString('is-IS')}</span>
-          )}
-        </div>
         <p className="mb-6 text-center">Bestu verðin frá öllum helstu söluaðilum á Íslandi</p>
         
         <div className="mb-6 p-4 bg-blue-50 rounded-lg">

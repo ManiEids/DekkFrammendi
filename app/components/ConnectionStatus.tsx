@@ -1,30 +1,22 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useDekkja, useStaerdir, useSkrapa } from '../hooks/useDekkjaApi';
-import { FaExclamationTriangle, FaSyncAlt } from 'react-icons/fa';
+import { useDekkja, useStaerdir } from '../hooks/useDekkjaApi';
+import { FaExclamationTriangle } from 'react-icons/fa';
 
 export default function ConnectionStatus() {
   const { data: dekk, isLoading: dekkLoading, isError: dekkError } = useDekkja({});
   const { data: staerdir, isLoading: staerdirLoading } = useStaerdir();
-  const { mutate: skrapa, isLoading: isSkraping } = useSkrapa();
   const [isVisible, setIsVisible] = useState(true);
   
-  // Simple status determination - we mainly care if there's data
   const hasData = (dekk && dekk.length > 0) || (staerdir && staerdir.length > 0);
-  const isLoading = dekkLoading || staerdirLoading || isSkraping;
+  const isLoading = dekkLoading || staerdirLoading;
   const hasError = dekkError && !hasData;
   
   let status: 'loading' | 'data' | 'error' = 'loading';
   if (hasData) status = 'data';
   else if (hasError && !isLoading) status = 'error';
   else status = 'loading';
-
-  // Handle manual scraping for demonstration
-  const handleScrapeSample = () => {
-    // Default values for a common tire size
-    skrapa({ breidd: 205, haed: 55, felga: 16 });
-  };
 
   // Hide after 10 seconds if data is loaded
   useEffect(() => {
@@ -38,8 +30,8 @@ export default function ConnectionStatus() {
   const getStatusText = () => {
     switch (status) {
       case 'loading': return 'Sækir gögn...';
-      case 'data': return 'Bakendi með gögn';
-      case 'error': return 'Engin gögn í bakenda';
+      case 'data': return 'Gögn fundust';
+      case 'error': return 'Engin gögn fundust';
     }
   };
 
@@ -51,7 +43,6 @@ export default function ConnectionStatus() {
     }
   };
 
-  // Minimized state
   if (!isVisible) {
     return (
       <button 
@@ -75,26 +66,6 @@ export default function ConnectionStatus() {
           ✕
         </button>
       </div>
-      
-      {/* Show action button when there's no data */}
-      {status === 'error' && !isSkraping && (
-        <div className="mt-2 flex items-center">
-          <button 
-            onClick={handleScrapeSample}
-            className="text-xs bg-blue-600 text-white px-2 py-1 rounded flex items-center"
-            disabled={isSkraping}
-          >
-            <FaSyncAlt className={`mr-1 ${isSkraping ? 'animate-spin' : ''}`} />
-            Sækja gögn (205/55R16)
-          </button>
-        </div>
-      )}
-      
-      {isSkraping && (
-        <div className="mt-2 text-xs text-blue-600">
-          Sækir gögn... Þetta getur tekið nokkrar mínútur.
-        </div>
-      )}
     </div>
   );
 }
