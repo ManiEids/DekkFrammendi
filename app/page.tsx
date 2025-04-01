@@ -13,8 +13,27 @@ export default function Forsida() {
   const searchParams = useSearchParams();
   const [filter, setFilter] = useState<DekkFilter>({});
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [lastSeedCount, setLastSeedCount] = useState<number | null>(null);
+  const [totalTires, setTotalTires] = useState<number>(0);
   const [updateMessage, setUpdateMessage] = useState('');
+  
+  // Fetch last update info from internal API
+  useEffect(() => {
+    fetch('/api/lastUpdated')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.lastUpdate) {
+          const dt = new Date(data.lastUpdate);
+          setLastUpdate(dt);
+          setTotalTires(Number(data.count) || 0);
+          const diffMs = new Date().getTime() - dt.getTime();
+          const diffDays = diffMs / (1000 * 60 * 60 * 24);
+          if (diffDays >= 1) {
+            setUpdateMessage("Mæli með að keyra scrapy spiders aftur. Dagur+ síðan seinast");
+          }
+        }
+      })
+      .catch((err) => console.error("Error fetching last update:", err));
+  }, []);
 
   // Populate initial filter from URL if present.
   useEffect(() => {
@@ -27,25 +46,6 @@ export default function Forsida() {
     if (rim_size) newFilter.rim_size = parseInt(rim_size);
     setFilter(newFilter);
   }, [searchParams]);
-
-  // Fetch last update info from internal API, including tire count
-  useEffect(() => {
-    fetch('/api/lastUpdated')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.lastUpdate) {
-          const dt = new Date(data.lastUpdate);
-          setLastUpdate(dt);
-          if (data.count) setLastSeedCount(Number(data.count));
-          const diffMs = new Date().getTime() - dt.getTime();
-          const diffDays = diffMs / (1000 * 60 * 60 * 24);
-          if (diffDays >= 1) {
-            setUpdateMessage("Mæli með að keyra scrapy spiders aftur. Dagur+ síðan seinast");
-          }
-        }
-      })
-      .catch((err) => console.error("Error fetching last update:", err));
-  }, []);
 
   const { data: dekk, isLoading, isError } = useDekkja(filter);
 
@@ -82,21 +82,6 @@ export default function Forsida() {
         Finndu bestu dekkin
       </h1>
       
-      {/* Last updated info and tire count */}
-      {lastUpdate && (
-        <div className="mb-4 text-center text-sm text-gray-700">
-          <p>
-            <strong>Gagnagrunnur síðast uppfærður:</strong> {formatLastUpdate(lastUpdate)}
-          </p>
-          {lastSeedCount !== null && (
-            <p className="mt-1">
-              <strong>Total dekk:</strong> {lastSeedCount}
-            </p>
-          )}
-          {updateMessage && <p className="mt-1 text-red-600">{updateMessage}</p>}
-        </div>
-      )}
-
       {/* Updated search form container with improved contrast */}
       <div className="mb-8 max-w-lg mx-auto">
         <DekkjaFilter 
@@ -120,6 +105,26 @@ export default function Forsida() {
       {isLoading && <div className="mt-6 text-center text-white">Hleður gögnum…</div>}
       {isError && <div className="mt-6 text-center text-error">Villa við að sækja gögn.</div>}
       {dekk && dekk.length === 0 && !isLoading && <div className="mt-6 text-center text-warning">Engin dekk fundust.</div>}
+      
+      {/* Database last updated info - now at the bottom of the page */}
+      <div className="mt-16 p-4 bg-black bg-opacity-30 rounded-lg text-center">
+        {lastUpdate ? (
+          <>
+            <p className="text-white">
+              <strong>Gagnagrunnur síðast uppfærður:</strong> {formatLastUpdate(lastUpdate)}
+            </p>
+            {totalTires > 0 && (
+              <p className="mt-1 text-white">
+                <strong>Total dekk:</strong> {totalTires.toLocaleString('is-IS')} 
+                <span className="ml-2">{updateMessage ? "⚠️" : "✅"}</span>
+              </p>
+            )}
+            {updateMessage && <p className="mt-1 text-orange-300">{updateMessage}</p>}
+          </>
+        ) : (
+          <p className="text-yellow-300">Gögn um síðustu uppfærslu ekki tiltæk</p>
+        )}
+      </div>
     </div>
   );
 }

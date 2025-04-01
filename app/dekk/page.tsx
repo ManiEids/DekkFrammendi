@@ -21,13 +21,19 @@ export default function DekkjaListi() {
     const width = searchParams.get('width');
     const aspect_ratio = searchParams.get('aspect_ratio');
     const rim_size = searchParams.get('rim_size');
+    const sortBy = searchParams.get('sortBy') as "price" | "manufacturer" | "seller" | undefined;
+    const sortOrder = searchParams.get('sortOrder') as "asc" | "desc" | undefined;
 
     const newFilter: DekkFilter = {};
     if (width) newFilter.width = parseInt(width);
     if (aspect_ratio) newFilter.aspect_ratio = parseInt(aspect_ratio);
     if (rim_size) newFilter.rim_size = parseInt(rim_size);
+    if (sortBy) newFilter.sortBy = sortBy;
+    if (sortOrder) newFilter.sortOrder = sortOrder;
 
     setFilter(newFilter);
+    setSortBy(sortBy);
+    setSortOrder(sortOrder);
   }, [searchParams]);
 
   const { data: dekk, isLoading, isError } = useDekkja(filter);
@@ -114,10 +120,10 @@ export default function DekkjaListi() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
-        <Link href="/" className="flex items-center text-blue-600 hover:underline">
+        <Link href="/" className="flex items-center text-white hover:text-accent-color">
           <FaArrowLeft className="mr-2" /> Til baka
         </Link>
-        <h1 className="text-2xl font-bold text-center">
+        <h1 className="text-2xl font-bold text-center text-white">
           {createSizeTitle()}
         </h1>
       </div>
@@ -131,41 +137,42 @@ export default function DekkjaListi() {
           />
         </div>
 
-        <div className="flex-1">
-          <div className="mb-4 flex flex-col md:flex-row gap-4 items-start">
-            <div>
-              <label className="block text-sm font-medium mb-1">Raða eftir</label>
-              <select
-                className="w-full p-2 border rounded"
-                value={sortBy ?? ""}
-                onChange={(e) => setSortBy(e.target.value as "price" | "manufacturer" | "seller" || undefined)}
-              >
-                <option value="">Velja röðun...</option>
-                <option value="price">Verð</option>
-                <option value="manufacturer">Framleiðandi</option>
-                <option value="seller">Seljandi</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Raðunar röð</label>
-              <select
-                className="w-full p-2 border rounded"
-                value={sortOrder ?? ""}
-                onChange={(e) => setSortOrder(e.target.value as "asc" | "desc" || undefined)}
-              >
-                <option value="">Velja röð...</option>
-                <option value="asc">Eftir vaxandi</option>
-                <option value="desc">Eftir lækkandi</option>
-              </select>
-            </div>
-            <div className="flex items-end">
-              <button
-                className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
-                onClick={handleLeit}
-                disabled={!filter.width && !filter.aspect_ratio && !filter.rim_size}
-              >
-                Leita að dekkjum
-              </button>
+        <div className="flex-1 max-w-full overflow-y-auto">
+          <div className="search-container mb-4">
+            <div className="flex flex-col md:flex-row gap-4 items-start">
+              <div className="w-full md:w-auto flex-1">
+                <label className="form-label">Raða eftir</label>
+                <select
+                  className="form-select"
+                  value={sortBy ?? ""}
+                  onChange={(e) => setSortBy(e.target.value as "price" | "manufacturer" | "seller" || undefined)}
+                >
+                  <option value="">Velja röðun...</option>
+                  <option value="price">Verð</option>
+                  <option value="manufacturer">Framleiðandi</option>
+                  <option value="seller">Seljandi</option>
+                </select>
+              </div>
+              <div className="w-full md:w-auto flex-1">
+                <label className="form-label">Raðunar röð</label>
+                <select
+                  className="form-select"
+                  value={sortOrder ?? ""}
+                  onChange={(e) => setSortOrder(e.target.value as "asc" | "desc" || undefined)}
+                >
+                  <option value="">Velja röð...</option>
+                  <option value="asc">Eftir vaxandi</option>
+                  <option value="desc">Eftir lækkandi</option>
+                </select>
+              </div>
+              <div className="w-full md:w-auto flex-1 flex items-end">
+                <button
+                  className="btn-primary w-full"
+                  onClick={handleLeit}
+                >
+                  Uppfæra leit
+                </button>
+              </div>
             </div>
           </div>
 
@@ -204,11 +211,11 @@ export default function DekkjaListi() {
           )}
 
           {!isLoading && !isError && dekk && dekk.length > 0 && (
-            <div>
+            <div className="overflow-y-auto">
               <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between">
-                <p className="text-gray-600">{dekk.length} dekk fundust</p>
+                <p className="text-white">{dekk.length} dekk fundust</p>
                 {formatPriceInfo() && (
-                  <p className="text-gray-600 mt-1 md:mt-0">{formatPriceInfo()}</p>
+                  <p className="text-white mt-1 md:mt-0">{formatPriceInfo()}</p>
                 )}
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

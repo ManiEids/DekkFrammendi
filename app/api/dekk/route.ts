@@ -34,8 +34,22 @@ export async function GET(request: Request) {
   }
   // ...additional filters as needed...
   
+  // Add sorting capability
+  const sortBy = searchParams.get('sortBy');
+  const sortOrder = searchParams.get('sortOrder') || 'asc';
+  
+  // Build sorting clause
+  let orderByClause = '';
+  if (sortBy) {
+    // Validate sortBy to prevent SQL injection
+    const validSortColumns = ['price', 'manufacturer', 'seller'];
+    if (validSortColumns.includes(sortBy)) {
+      orderByClause = ` ORDER BY ${sortBy} ${sortOrder === 'desc' ? 'DESC' : 'ASC'}`;
+    }
+  }
+  
   const whereClause = filters.length ? `WHERE ${filters.join(' AND ')}` : '';
-  const queryText = `SELECT * FROM tires ${whereClause};`;
+  const queryText = `SELECT * FROM tires ${whereClause}${orderByClause};`;
   
   try {
     const result = await pool.query(queryText, values);
