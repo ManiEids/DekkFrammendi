@@ -6,7 +6,7 @@ import { useDekkja } from './hooks/useDekkjaApi';
 import { DekkFilter } from './types';
 import DekkjaFilter from './components/DekkjaFilter';
 import Link from 'next/link';
-import { FaSearch, FaArrowLeft } from 'react-icons/fa';
+import { FaSearch, FaArrowLeft, FaSync } from 'react-icons/fa';
 
 export default function Forsida() {
   const router = useRouter();
@@ -15,9 +15,11 @@ export default function Forsida() {
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [totalTires, setTotalTires] = useState<number>(0);
   const [updateMessage, setUpdateMessage] = useState('');
-  
-  // Fetch last update info from internal API with timestamp to bust cache
-  useEffect(() => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Extract fetch logic into a reusable function
+  const fetchLastUpdate = () => {
+    setIsRefreshing(true);
     // Add timestamp to URL to prevent caching
     const timestamp = new Date().getTime();
     fetch(`/api/lastUpdated?_=${timestamp}`)
@@ -29,12 +31,18 @@ export default function Forsida() {
           setTotalTires(Number(data.count) || 0);
           const diffMs = new Date().getTime() - dt.getTime();
           const diffDays = diffMs / (1000 * 60 * 60 * 24);
-          if (diffDays >= 1) {
-            setUpdateMessage("Mæli með að keyra scrapy spiders aftur. Dagur+ síðan seinast");
-          }
+          setUpdateMessage(diffDays >= 1 
+            ? "Mæli með að keyra scrapy spiders aftur. Dagur+ síðan seinast" 
+            : "");
         }
       })
-      .catch((err) => console.error("Error fetching last update:", err));
+      .catch((err) => console.error("Error fetching last update:", err))
+      .finally(() => setIsRefreshing(false));
+  };
+
+  // Initial fetch on component mount
+  useEffect(() => {
+    fetchLastUpdate();
   }, []);
 
   // Populate initial filter from URL if present.
@@ -123,8 +131,18 @@ export default function Forsida() {
       {isError && <div className="mt-6 text-center text-error">Villa við að sækja gögn.</div>}
       {dekk && dekk.length === 0 && !isLoading && <div className="mt-6 text-center text-warning">Engin dekk fundust.</div>}
       
-      {/* Database last updated info - now at the bottom of the page */}
-      <div className="mt-16 p-4 bg-black bg-opacity-30 rounded-lg text-center">
+      {/* Database last updated info - now with refresh button */}
+      <div className="mt-16 p-4 bg-black bg-opacity-30 rounded-lg text-center relative">
+        {/* Refresh button */}
+        <button 
+          onClick={fetchLastUpdate}
+          disabled={isRefreshing}
+          className="absolute top-2 right-2 p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full transition"
+          aria-label="Refresh timestamp"
+        >
+          <FaSync className={isRefreshing ? "animate-spin" : ""} />
+        </button>
+        
         {lastUpdate ? (
           <>
             <p className="text-white">
