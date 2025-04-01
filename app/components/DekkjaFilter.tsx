@@ -38,7 +38,7 @@ export default function DekkjaFilter({
     if (!sortOrder) {
       onFilterChange({ sortBy: undefined, sortOrder: undefined });
     } else {
-      onFilterChange({ sortBy: 'verd', sortOrder });
+      onFilterChange({ sortBy: 'price', sortOrder }); // Changed from 'verd' to 'price'
     }
   };
 
@@ -179,19 +179,19 @@ export default function DekkjaFilter({
           <div className="flex gap-2">
             <button 
               className={`flex-1 p-2 border rounded flex items-center justify-center ${
-                filter.sortBy === 'verd' && filter.sortOrder === 'asc' 
+                filter.sortBy === 'price' && filter.sortOrder === 'asc' 
                   ? 'bg-blue-100 border-blue-500' : 'hover:bg-gray-100'
               }`}
-              onClick={() => handleSortChange(filter.sortBy === 'verd' && filter.sortOrder === 'asc' ? undefined : 'asc')}
+              onClick={() => handleSortChange(filter.sortBy === 'price' && filter.sortOrder === 'asc' ? undefined : 'asc')}
             >
               <FaSortAmountUp className="mr-1" /> Lægsta verð
             </button>
             <button 
               className={`flex-1 p-2 border rounded flex items-center justify-center ${
-                filter.sortBy === 'verd' && filter.sortOrder === 'desc' 
+                filter.sortBy === 'price' && filter.sortOrder === 'desc' 
                   ? 'bg-blue-100 border-blue-500' : 'hover:bg-gray-100'
               }`}
-              onClick={() => handleSortChange(filter.sortBy === 'verd' && filter.sortOrder === 'desc' ? undefined : 'desc')}
+              onClick={() => handleSortChange(filter.sortBy === 'price' && filter.sortOrder === 'desc' ? undefined : 'desc')}
             >
               <FaSortAmountDown className="mr-1" /> Hæsta verð
             </button>
