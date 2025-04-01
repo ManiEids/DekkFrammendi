@@ -23,7 +23,7 @@ export interface DekkFilter {
   maxPrice?: number;
   inStock?: boolean;
   id?: number;
-  sortBy?: 'price' | 'width' | 'rim_size';
+  sortBy?: 'price' | 'manufacturer' | 'seller';
   sortOrder?: 'asc' | 'desc';
 }
 

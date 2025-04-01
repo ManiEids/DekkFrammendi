@@ -8,13 +8,15 @@ const pool = new Pool({
 
 export async function GET(request: Request) {
   try {
-    // Assumes an "updated_at" column exists in "tires" table
-    const result = await pool.query(`SELECT MAX(updated_at) AS last_update FROM tires;`);
-    const lastUpdate = result.rows[0].last_update; // ISO string expected
-    return NextResponse.json({ lastUpdate });
+    // Updated query using last_modified instead of updated_at
+    const result = await pool.query(
+      `SELECT MAX(last_modified) AS last_update, COUNT(*) AS count FROM tires;`
+    );
+    const { last_update, count } = result.rows[0];
+    return NextResponse.json({ lastUpdate: last_update, count });
   } catch (error) {
     console.error('Error querying last updated:', error);
-    return NextResponse.json({ lastUpdate: null }, { status: 500 });
+    return NextResponse.json({ lastUpdate: null, count: 0 }, { status: 500 });
   }
 }
 

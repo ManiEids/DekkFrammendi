@@ -92,14 +92,18 @@ export default function DekkjaListi() {
     if (!dekk || dekk.length === 0) return "";
     
     const pricesWithValues = dekk.filter(d => d.price !== null).map(d => d.price);
-    
     if (pricesWithValues.length === 0) return "";
-    
     const lowest = Math.min(...pricesWithValues);
     const highest = Math.max(...pricesWithValues);
-    const formatter = new Intl.NumberFormat('is-IS');
+    // Updated formatter using currency style for ISK
+    const formatter = new Intl.NumberFormat('is-IS', { 
+      style: 'currency', 
+      currency: 'ISK', 
+      minimumFractionDigits: 0, 
+      maximumFractionDigits: 0 
+    });
     
-    return `Verð frá ${formatter.format(lowest)} kr. til ${formatter.format(highest)} kr.`;
+    return `Verð frá ${formatter.format(lowest)} til ${formatter.format(highest)}`;
   };
 
   return (

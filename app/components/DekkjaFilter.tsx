@@ -58,6 +58,32 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
           ))}
         </select>
       </div>
+      {/* Sorting dropdowns */}
+      <div>
+        <label className="block text-sm font-medium mb-1">Raða eftir</label>
+        <select
+          className="w-full p-2 border rounded"
+          value={filter.sortBy ?? ""}
+          onChange={(e) => onFilterChange({ sortBy: e.target.value || undefined })}
+        >
+          <option value="">Velja röðun...</option>
+          <option value="price">Verð</option>
+          <option value="manufacturer">Framleiðandi</option>
+          <option value="seller">Seljandi</option>
+        </select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Raðunar röð</label>
+        <select
+          className="w-full p-2 border rounded"
+          value={filter.sortOrder ?? ""}
+          onChange={(e) => onFilterChange({ sortOrder: e.target.value || undefined })}
+        >
+          <option value="">Velja röð...</option>
+          <option value="asc">Eftir vaxandi</option>
+          <option value="desc">Eftir lækkandi</option>
+        </select>
+      </div>
       {/* Clear button */}
       {onClearFilters && (
         <div>

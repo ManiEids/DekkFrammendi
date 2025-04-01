@@ -13,6 +13,7 @@ export default function Forsida() {
   const searchParams = useSearchParams();
   const [filter, setFilter] = useState<DekkFilter>({});
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [lastSeedCount, setLastSeedCount] = useState<number | null>(null);
   const [updateMessage, setUpdateMessage] = useState('');
 
   // Populate initial filter from URL if present.
@@ -27,7 +28,7 @@ export default function Forsida() {
     setFilter(newFilter);
   }, [searchParams]);
 
-  // Fetch last update info from internal API
+  // Fetch last update info from internal API, including tire count
   useEffect(() => {
     fetch('/api/lastUpdated')
       .then((res) => res.json())
@@ -35,6 +36,7 @@ export default function Forsida() {
         if (data.lastUpdate) {
           const dt = new Date(data.lastUpdate);
           setLastUpdate(dt);
+          if (data.count) setLastSeedCount(Number(data.count));
           const diffMs = new Date().getTime() - dt.getTime();
           const diffDays = diffMs / (1000 * 60 * 60 * 24);
           if (diffDays >= 1) {
@@ -78,10 +80,17 @@ export default function Forsida() {
 
       <h1 className="text-3xl font-bold mb-6 text-center">Finndu bestu dekkin</h1>
       
-      {/* Last updated info */}
+      {/* Last updated info and tire count */}
       {lastUpdate && (
         <div className="mb-4 text-center text-sm text-gray-700">
-          <p><strong>Gagnagrunnur síðast uppfærður:</strong> {formatLastUpdate(lastUpdate)}</p>
+          <p>
+            <strong>Gagnagrunnur síðast uppfærður:</strong> {formatLastUpdate(lastUpdate)}
+          </p>
+          {lastSeedCount !== null && (
+            <p className="mt-1">
+              <strong>Total dekk:</strong> {lastSeedCount}
+            </p>
+          )}
           {updateMessage && <p className="mt-1 text-red-600">{updateMessage}</p>}
         </div>
       )}
