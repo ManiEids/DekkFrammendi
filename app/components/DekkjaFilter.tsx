@@ -64,7 +64,11 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
         <select
           className="w-full p-2 border rounded"
           value={filter.sortBy ?? ""}
-          onChange={(e) => onFilterChange({ sortBy: e.target.value || undefined })}
+          onChange={(e) => {
+            const val = e.target.value;
+            const sortBy = (val === "price" || val === "manufacturer" || val === "seller") ? val : undefined;
+            onFilterChange({ sortBy });
+          }}
         >
           <option value="">Velja röðun...</option>
           <option value="price">Verð</option>
