@@ -62,7 +62,14 @@ export default function Forsida() {
     if (filter.width) params.append('width', filter.width.toString());
     if (filter.aspect_ratio) params.append('aspect_ratio', filter.aspect_ratio.toString());
     if (filter.rim_size) params.append('rim_size', filter.rim_size.toString());
-    router.push(`/dekk?${params.toString()}`);
+    
+    // Navigate to dekk page with any parameters that were provided (or none)
+    router.push(`/dekk${params.toString() ? `?${params.toString()}` : ''}`);
+  };
+
+  // New function to see all tires
+  const handleViewAllTires = () => {
+    router.push('/dekk');
   };
 
   // Format last update date in Icelandic format
@@ -90,13 +97,21 @@ export default function Forsida() {
           onClearFilters={handleClearFilters}
         />
         
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center space-y-4">
+          {/* Modified search button - no longer disabled if filters are empty */}
           <button 
             onClick={handleLeit}
-            disabled={!filter.width && !filter.aspect_ratio && !filter.rim_size}
             className="btn-primary w-full"
           >
             <FaSearch className="mr-2 inline-block" /> Leita að dekkjum
+          </button>
+          
+          {/* New button to see all tires */}
+          <button 
+            onClick={handleViewAllTires}
+            className="w-full py-3 px-3 rounded-lg bg-blue-800 hover:bg-blue-900 text-white transition"
+          >
+            Sýna öll dekk
           </button>
         </div>
       </div>
