@@ -81,7 +81,11 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
         <select
           className="w-full p-2 border rounded"
           value={filter.sortOrder ?? ""}
-          onChange={(e) => onFilterChange({ sortOrder: e.target.value || undefined })}
+          onChange={(e) => {
+            const val = e.target.value;
+            const sortOrder = (val === "asc" || val === "desc") ? val : undefined;
+            onFilterChange({ sortOrder });
+          }}
         >
           <option value="">Velja röð...</option>
           <option value="asc">Eftir vaxandi</option>
