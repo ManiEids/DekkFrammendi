@@ -15,13 +15,20 @@ export default function DekkjaKort({ dekk, onAddToSamanburdur, isSelected }: { d
     return formatter.format(price);
   };
   
-  // Get stock status in Icelandic
-  const getStockStatus = (status: string | null, count: number | null) => {
-    if (!status) return 'Birgðastaða óþekkt';
+  // Render stock status in Icelandic
+  const renderStockStatus = (status: string | null, count: number | null) => {
+    if (!status) return <span className="text-gray-500">Birgðastaða óþekkt</span>;
     if (status.toLowerCase().includes('in stock') || status.toLowerCase().includes('til í')) {
-      return 'Á lager' + (count ? `: ${count} stk` : '');
+      if (count && count > 0) {
+        return (
+          <span className="text-green-600">
+            Á lager: <span className="text-orange-500 font-bold">{count} stk</span>
+          </span>
+        );
+      }
+      return <span className="text-green-600">Á lager</span>;
     }
-    return 'Ekki á lager';
+    return <span className="text-red-600">Ekki á lager</span>;
   };
   
   return (
@@ -59,9 +66,7 @@ export default function DekkjaKort({ dekk, onAddToSamanburdur, isSelected }: { d
           
           <div className="mt-auto">
             <p className="text-lg font-bold text-blue-600">{formatPrice(dekk.price)}</p>
-            <p className={`text-sm ${dekk.inventory_count && dekk.inventory_count > 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {getStockStatus(dekk.stock, dekk.inventory_count)}
-            </p>
+            {renderStockStatus(dekk.stock, dekk.inventory_count)}
           </div>
         </div>
         

@@ -14,41 +14,39 @@ export default function DekkjaListi() {
   const router = useRouter();
   const [filter, setFilter] = useState<DekkFilter>({});
   const [selectedDekk, setSelectedDekk] = useState<Dekk[]>([]);
-  
-  // Get query params
+  const [sortBy, setSortBy] = useState<"price" | "manufacturer" | "seller" | undefined>(undefined);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>(undefined);
+
   useEffect(() => {
     const width = searchParams.get('width');
     const aspect_ratio = searchParams.get('aspect_ratio');
     const rim_size = searchParams.get('rim_size');
-    
+
     const newFilter: DekkFilter = {};
     if (width) newFilter.width = parseInt(width);
     if (aspect_ratio) newFilter.aspect_ratio = parseInt(aspect_ratio);
     if (rim_size) newFilter.rim_size = parseInt(rim_size);
-    
+
     setFilter(newFilter);
   }, [searchParams]);
-  
+
   const { data: dekk, isLoading, isError } = useDekkja(filter);
-  
+
   const handleFilterChange = (newFilter: DekkFilter) => {
     setFilter({ ...filter, ...newFilter });
   };
-  
+
   const handleClearFilters = () => {
-    // Keep only initial search parameters from URL
     const initialFilter: DekkFilter = {};
     const width = searchParams.get('width');
     const aspect_ratio = searchParams.get('aspect_ratio');
     const rim_size = searchParams.get('rim_size');
-    
     if (width) initialFilter.width = parseInt(width);
     if (aspect_ratio) initialFilter.aspect_ratio = parseInt(aspect_ratio);
     if (rim_size) initialFilter.rim_size = parseInt(rim_size);
-    
     setFilter(initialFilter);
   };
-  
+
   const handleToggleToSamanburdur = (item: Dekk) => {
     if (selectedDekk.some(d => d.id === item.id)) {
       setSelectedDekk(selectedDekk.filter(d => d.id !== item.id));
@@ -60,7 +58,7 @@ export default function DekkjaListi() {
       }
     }
   };
-  
+
   const startSamanburdur = () => {
     if (selectedDekk.length > 1) {
       const ids = selectedDekk.map(d => d.id).join(',');
@@ -68,42 +66,49 @@ export default function DekkjaListi() {
     }
   };
 
-  // Create title based on available filter dimensions
   const createSizeTitle = () => {
     if (!filter.width && !filter.aspect_ratio && !filter.rim_size) {
       return "Öll dekk";
     }
-    
+
     const parts = [];
     if (filter.width) parts.push(`${filter.width}`);
     else parts.push("x");
-    
+
     if (filter.aspect_ratio) parts.push(`${filter.aspect_ratio}`);
     else parts.push("x");
-    
+
     if (filter.rim_size) parts.push(`R${filter.rim_size}`);
     else parts.push("Rx");
-    
+
     return `Dekk í stærðinni ${parts.join("/")}`;
   };
 
-  // Format pricing info for display
   const formatPriceInfo = () => {
     if (!dekk || dekk.length === 0) return "";
-    
+
     const pricesWithValues = dekk.filter(d => d.price !== null).map(d => d.price);
     if (pricesWithValues.length === 0) return "";
     const lowest = Math.min(...pricesWithValues);
     const highest = Math.max(...pricesWithValues);
-    // Updated formatter using currency style for ISK
-    const formatter = new Intl.NumberFormat('is-IS', { 
-      style: 'currency', 
-      currency: 'ISK', 
-      minimumFractionDigits: 0, 
-      maximumFractionDigits: 0 
+    const formatter = new Intl.NumberFormat('is-IS', {
+      style: 'currency',
+      currency: 'ISK',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     });
-    
+
     return `Verð frá ${formatter.format(lowest)} til ${formatter.format(highest)}`;
+  };
+
+  const handleLeit = () => {
+    const params = new URLSearchParams();
+    if (filter.width) params.append('width', filter.width.toString());
+    if (filter.aspect_ratio) params.append('aspect_ratio', filter.aspect_ratio.toString());
+    if (filter.rim_size) params.append('rim_size', filter.rim_size.toString());
+    if (sortBy) params.append('sortBy', sortBy);
+    if (sortOrder) params.append('sortOrder', sortOrder);
+    router.push(`/dekk?${params.toString()}`);
   };
 
   return (
@@ -118,18 +123,52 @@ export default function DekkjaListi() {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Filter panel */}
         <div className="w-full lg:w-64">
-          <DekkjaFilter 
+          <DekkjaFilter
             filter={filter}
             onFilterChange={handleFilterChange}
             onClearFilters={handleClearFilters}
           />
         </div>
 
-        {/* Results area */}
         <div className="flex-1">
-          {/* Selected items counter */}
+          <div className="mb-4 flex flex-col md:flex-row gap-4 items-start">
+            <div>
+              <label className="block text-sm font-medium mb-1">Raða eftir</label>
+              <select
+                className="w-full p-2 border rounded"
+                value={sortBy ?? ""}
+                onChange={(e) => setSortBy(e.target.value as "price" | "manufacturer" | "seller" || undefined)}
+              >
+                <option value="">Velja röðun...</option>
+                <option value="price">Verð</option>
+                <option value="manufacturer">Framleiðandi</option>
+                <option value="seller">Seljandi</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Raðunar röð</label>
+              <select
+                className="w-full p-2 border rounded"
+                value={sortOrder ?? ""}
+                onChange={(e) => setSortOrder(e.target.value as "asc" | "desc" || undefined)}
+              >
+                <option value="">Velja röð...</option>
+                <option value="asc">Eftir vaxandi</option>
+                <option value="desc">Eftir lækkandi</option>
+              </select>
+            </div>
+            <div className="flex items-end">
+              <button
+                className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
+                onClick={handleLeit}
+                disabled={!filter.width && !filter.aspect_ratio && !filter.rim_size}
+              >
+                Leita að dekkjum
+              </button>
+            </div>
+          </div>
+
           {selectedDekk.length > 0 && (
             <div className="flex items-center justify-between bg-blue-50 p-4 rounded-lg mb-4">
               <div>
@@ -146,28 +185,24 @@ export default function DekkjaListi() {
             </div>
           )}
 
-          {/* Loading state */}
           {isLoading && (
             <div className="flex justify-center items-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
             </div>
           )}
 
-          {/* Error state */}
           {isError && (
             <div className="bg-red-50 p-4 rounded-lg text-red-700">
               <p>Villa kom upp við að sækja gögn. Vinsamlegast reyndu aftur síðar.</p>
             </div>
           )}
 
-          {/* Empty state */}
           {!isLoading && !isError && dekk?.length === 0 && (
             <div className="bg-yellow-50 p-6 rounded-lg text-center">
               <p className="text-lg mb-4">Engin dekk fundust sem passa við þessar síur.</p>
             </div>
           )}
 
-          {/* Results grid */}
           {!isLoading && !isError && dekk && dekk.length > 0 && (
             <div>
               <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between">

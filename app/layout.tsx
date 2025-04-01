@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { useState } from 'react';
 import ConnectionStatus from './components/ConnectionStatus';
 import Header from './components/Header';
+import SpaceBanner from './components/SpaceBanner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -33,6 +34,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <QueryClientProvider client={queryClient}>
           <Header />
+          <SpaceBanner />
           <main className="container mx-auto px-4 py-6">
             {children}
           </main>
