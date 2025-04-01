@@ -4,16 +4,73 @@
 @tailwind utilities;
 
 :root {
+  /* Cosmic theme variables */
   --foreground-rgb: 255, 255, 255;
-  --background-start: #000428; /* dark blue */
-  --background-end: #004e92;   /* lighter blue */
+  --background-start: #000428; /* Dark space blue */
+  --background-end: #004e92;   /* Lighter space blue */
+  --accent-color: #ff6f61;     /* Warm accent color */
+  --search-bg: rgba(0, 0, 0, 0.7); /* Semi-transparent dark for search boxes */
+  --heading-color: #ffffff;
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(180deg, var(--background-start), var(--background-end));
+  font-family: 'Inter', sans-serif;
 }
 
 .container {
   max-width: 1280px;
+}
+
+/* Custom search container styling */
+.search-container {
+  background-color: var(--search-bg);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  color: rgb(var(--foreground-rgb));
+}
+
+.search-container input,
+.search-container select,
+.search-container button {
+  font-size: 1rem;
+}
+
+.search-container button {
+  background-color: var(--accent-color);
+  color: #fff;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.3s;
+  border: none;
+}
+
+.search-container button:hover {
+  background-color: #ff8f7a;
+}
+
+/* Heading and text adjustments */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--heading-color);
+}
+
+a {
+  color: var(--accent-color);
+}
+
+a:hover {
+  color: #ff8f7a;
+}
+
+/* Utility text colors */
+.text-error {
+  color: #f87171;
+}
+.text-warning {
+  color: #fbbf24;
+}
+.text-success {
+  color: #4ade80;
 }
