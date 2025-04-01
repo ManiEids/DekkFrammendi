@@ -1,16 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useDekkja, useStaerdir } from '../hooks/useDekkjaApi';
+import { useDekkja, useStaerdir, useLastUpdated } from '../hooks/useDekkjaApi';
 import { FaExclamationTriangle } from 'react-icons/fa';
 
 export default function ConnectionStatus() {
   const { data: dekk, isLoading: dekkLoading, isError: dekkError } = useDekkja({});
   const { data: staerdir, isLoading: staerdirLoading } = useStaerdir();
+  const { data: lastUpdated, isLoading: lastUpdatedLoading } = useLastUpdated();
   const [isVisible, setIsVisible] = useState(true);
   
   const hasData = (dekk && dekk.length > 0) || (staerdir && staerdir.length > 0);
-  const isLoading = dekkLoading || staerdirLoading;
+  const isLoading = dekkLoading || staerdirLoading || lastUpdatedLoading;
   const hasError = dekkError && !hasData;
   
   let status: 'loading' | 'data' | 'error' = 'loading';
@@ -30,7 +31,9 @@ export default function ConnectionStatus() {
   const getStatusText = () => {
     switch (status) {
       case 'loading': return 'Sækir gögn...';
-      case 'data': return 'Gögn fundust';
+      case 'data': return lastUpdated?.count 
+        ? `Gögn fundust um ${Number(lastUpdated.count).toLocaleString('is-IS')} dekk`
+        : 'Gögn fundust';
       case 'error': return 'Engin gögn fundust';
     }
   };
@@ -47,7 +50,7 @@ export default function ConnectionStatus() {
     return (
       <button 
         onClick={() => setIsVisible(true)}
-        className="fixed bottom-4 left-4 p-2 bg-gray-200 hover:bg-gray-300 rounded-md z-50 text-xs"
+        className="fixed bottom-4 left-4 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md z-50 text-xs"
       >
         Sýna stöðu
       </button>
@@ -55,13 +58,13 @@ export default function ConnectionStatus() {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 p-3 bg-white rounded-md shadow-md z-50">
+    <div className="fixed bottom-4 left-4 p-3 bg-gray-800 text-white rounded-md shadow-md z-50">
       <div className="flex items-center">
         <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor()}`}></div>
         <span className="text-sm">{getStatusText()}</span>
         <button 
           onClick={() => setIsVisible(false)}
-          className="ml-3 text-gray-500 hover:text-gray-700 text-xs"
+          className="ml-3 text-gray-300 hover:text-gray-100 text-xs"
         >
           ✕
         </button>
