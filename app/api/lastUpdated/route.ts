@@ -8,15 +8,34 @@ const pool = new Pool({
 
 export async function GET(request: Request) {
   try {
-    // Updated query using last_modified instead of updated_at
+    // Query to get maximum last_modified and tire count
     const result = await pool.query(
       `SELECT MAX(last_modified) AS last_update, COUNT(*) AS count FROM tires;`
     );
     const { last_update, count } = result.rows[0];
-    return NextResponse.json({ lastUpdate: last_update, count });
+    
+    // Add cache control headers to prevent caching
+    return NextResponse.json(
+      { lastUpdate: last_update, count },
+      { 
+        headers: {
+          'Cache-Control': 'no-store, max-age=0',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        } 
+      }
+    );
   } catch (error) {
     console.error('Error querying last updated:', error);
-    return NextResponse.json({ lastUpdate: null, count: 0 }, { status: 500 });
+    return NextResponse.json(
+      { lastUpdate: null, count: 0 },
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store, max-age=0',
+        }
+      }
+    );
   }
 }
 

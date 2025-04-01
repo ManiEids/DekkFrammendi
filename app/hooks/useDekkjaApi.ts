@@ -52,3 +52,20 @@ export function useVefsidur() {
     }
   });
 }
+
+export function useLastUpdated() {
+  return useQuery('lastUpdated', 
+    async () => {
+      const timestamp = new Date().getTime();
+      const response = await fetch(`/api/lastUpdated?_=${timestamp}`);
+      if (!response.ok) throw new Error("Network response was not ok");
+      return response.json();
+    }, 
+    {
+      refetchOnMount: true,
+      refetchOnWindowFocus: true,
+      staleTime: 30000, // Consider data stale after 30 seconds
+      cacheTime: 60000, // Remove from cache after 1 minute
+    }
+  );
+}

@@ -16,9 +16,11 @@ export default function Forsida() {
   const [totalTires, setTotalTires] = useState<number>(0);
   const [updateMessage, setUpdateMessage] = useState('');
   
-  // Fetch last update info from internal API
+  // Fetch last update info from internal API with timestamp to bust cache
   useEffect(() => {
-    fetch('/api/lastUpdated')
+    // Add timestamp to URL to prevent caching
+    const timestamp = new Date().getTime();
+    fetch(`/api/lastUpdated?_=${timestamp}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.lastUpdate) {
