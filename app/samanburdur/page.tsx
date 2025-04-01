@@ -36,12 +36,12 @@ export default function Samanburdur() {
           id: d.id,
           product_name: d.product_name,
           manufacturer: d.manufacturer,
-          size: d.size,
+          size: `${d.width}/${d.aspect_ratio}R${d.rim_size}`, // compute size from fields
           price: d.price,
-          stock_status: d.stock_status,
-          stock_count: d.stock_count,
-          image_url: d.image_url,
-          source: d.source,
+          stock_status: d.stock,          // using stock instead of stock_status
+          stock_count: d.inventory_count, // using inventory_count
+          image_url: d.picture,           // using picture
+          source: d.seller,               // using seller
         }));
         setDekk(formattedDekk);
       } catch (err) {

@@ -120,3 +120,7 @@ export async function fetchVefsidur(): Promise<string[]> {
     return ['N1', 'Dekkjahollin', 'Nesdekk'];
   }
 }
+
+// Ensure that your backend API (at NEXT_PUBLIC_API_URL) implements SQL queries 
+// on the "tires" table using the provided parameters (width, aspect_ratio, rim_size, etc.).
+// Consider adding pagination parameters (limit and offset) for efficiency.
