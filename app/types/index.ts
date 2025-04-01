@@ -1,36 +1,34 @@
 export interface Dekk {
   id: number;
-  titill: string;
-  framleiddAf: string | null;
-  dekkStaerd: string;
-  breidd: number | null;
-  haed: number | null;
-  felga: number | null;
-  verd: number | null;
-  birgdaStada: string | null;
-  fjoldiALager: number | null;
-  mynd_url: string | null;
-  upprunaSida: string;
-  skrad_thann: string;
-  uppfaert_thann: string | null;
+  seller: string;
+  manufacturer: string;
+  product_name: string;
+  width: number;
+  aspect_ratio: number;
+  rim_size: number;
+  price: number;
+  stock: string;
+  inventory_count: number;
+  picture: string | null;
 }
 
 export interface DekkFilter {
-  breidd?: number;
-  haed?: number;
-  felga?: number;
-  framleiddAf?: string;
-  upprunaSida?: string;
-  lagmarksVerd?: number;
-  hamarksVerd?: number;
-  adeinsALager?: boolean;
+  width?: number;
+  aspect_ratio?: number;
+  rim_size?: number;
+  manufacturer?: string;
+  seller?: string;
+  product_name?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
   id?: number;
-  sortBy?: string; // For sorting results (e.g. 'verd')
-  sortOrder?: 'asc' | 'desc'; // Ascending or descending order
+  sortBy?: 'price' | 'width' | 'rim_size';
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface DekkStaerd {
-  breidd: number;
-  haed: number;
-  felga: number;
+  width: number;
+  aspect_ratio: number;
+  rim_size: number;
 }
