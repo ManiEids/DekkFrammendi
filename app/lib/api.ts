@@ -1,16 +1,7 @@
-import axios from 'axios';
 import { Dekk, DekkFilter, DekkStaerd } from '../types';
 import { WIDTHS, HEIGHTS, RIM_SIZES } from '../constants';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://dekkbakendi.onrender.com';
-
-// Create axios instance with a longer timeout for Render's free tier (which can be slow to wake up)
-const api = axios.create({ 
-  baseURL: API_URL,
-  timeout: 30000, // 30 seconds timeout
-});
-
-// Update FALLBACK_DATA to use new fields
+// FALLBACK_DATA remains for local development/testing
 const FALLBACK_DATA: {
   dekk: Dekk[];
   staerdir: DekkStaerd[];
@@ -31,7 +22,6 @@ const FALLBACK_DATA: {
   staerdir: [] as DekkStaerd[],
 };
 
-// Generate fallback size data using new keys
 for (const w of [175, 185, 195, 205, 215, 225, 235]) {
   for (const ar of [50, 55, 60, 65, 70]) {
     for (const rs of [15, 16, 17, 18]) {
@@ -42,7 +32,6 @@ for (const w of [175, 185, 195, 205, 215, 225, 235]) {
 
 export async function fetchDekk(filter: DekkFilter = {}): Promise<Dekk[]> {
   const params = new URLSearchParams();
-
   if (filter.id) params.append('id', filter.id.toString());
   if (filter.width) params.append('width', filter.width.toString());
   if (filter.aspect_ratio) params.append('aspect_ratio', filter.aspect_ratio.toString());
@@ -57,8 +46,9 @@ export async function fetchDekk(filter: DekkFilter = {}): Promise<Dekk[]> {
   if (filter.sortOrder) params.append('sortOrder', filter.sortOrder);
 
   try {
-    const response = await api.get<Dekk[]>(`/dekk?${params.toString()}`);
-    return response.data;
+    const response = await fetch(`/api/dekk?${params.toString()}`);
+    if (!response.ok) throw new Error("Network response was not ok");
+    return await response.json();
   } catch (error) {
     console.error('Error fetching tires:', error);
     let fallbackDekk = [...FALLBACK_DATA.dekk];
@@ -72,39 +62,28 @@ export async function fetchDekk(filter: DekkFilter = {}): Promise<Dekk[]> {
 
 export async function fetchStaerdir(): Promise<DekkStaerd[]> {
   try {
-    const response = await api.get<DekkStaerd[]>('/staerdir');
-    return response.data;
+    const response = await fetch(`/api/staerdir`);
+    if (!response.ok) throw new Error("Network response was not ok");
+    return await response.json();
   } catch (error) {
     console.error('Error fetching sizes:', error);
-    // Return fallback data or generate from constants
     const staerdir: DekkStaerd[] = [];
-    
-    // Create a set of common tire sizes from constants
     WIDTHS.forEach(width => {
       HEIGHTS.forEach(aspect_ratio => {
         RIM_SIZES.forEach(rim_size => {
-          // Only include common combinations to keep the list reasonable
-          if ((width === 195 && aspect_ratio === 65 && rim_size === 15) ||
-              (width === 205 && aspect_ratio === 55 && rim_size === 16) ||
-              (width === 225 && aspect_ratio === 45 && rim_size === 17) ||
-              // Add more common combinations
-              ([175, 185, 195, 205, 215, 225, 235].includes(width) && 
-               [45, 50, 55, 60, 65].includes(aspect_ratio) && 
-               [15, 16, 17, 18].includes(rim_size))) {
-            staerdir.push({ width, aspect_ratio, rim_size });
-          }
+          staerdir.push({ width, aspect_ratio, rim_size });
         });
       });
     });
-    
     return staerdir.length > 0 ? staerdir : FALLBACK_DATA.staerdir;
   }
 }
 
 export async function fetchFramleideendur(): Promise<string[]> {
   try {
-    const response = await api.get<string[]>('/framleidandi');
-    return response.data;
+    const response = await fetch(`/api/framleidandi`);
+    if (!response.ok) throw new Error("Network response was not ok");
+    return await response.json();
   } catch (error) {
     console.error('Error fetching manufacturers:', error);
     return ['Continental', 'Michelin', 'Bridgestone', 'Pirelli', 'Goodyear', 'Hankook', 'Nokian'];
@@ -113,14 +92,11 @@ export async function fetchFramleideendur(): Promise<string[]> {
 
 export async function fetchVefsidur(): Promise<string[]> {
   try {
-    const response = await api.get<string[]>('/vefsidur');
-    return response.data;
+    const response = await fetch(`/api/vefsidur`);
+    if (!response.ok) throw new Error("Network response was not ok");
+    return await response.json();
   } catch (error) {
     console.error('Error fetching websites:', error);
     return ['N1', 'Dekkjahollin', 'Nesdekk'];
   }
 }
-
-// Ensure that your backend API (at NEXT_PUBLIC_API_URL) implements SQL queries 
-// on the "tires" table using the provided parameters (width, aspect_ratio, rim_size, etc.).
-// Consider adding pagination parameters (limit and offset) for efficiency.

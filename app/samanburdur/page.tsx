@@ -8,7 +8,6 @@ import { FaArrowLeft, FaTimes, FaCar } from 'react-icons/fa';
 import { fetchDekk } from '../lib/api';
 import { Dekk } from '../types';
 
-// Extend Dekk with computed field "size"
 type ComparisonDekk = Dekk & { size: string };
 
 export default function Samanburdur() {
@@ -25,16 +24,12 @@ export default function Samanburdur() {
       setIsLoading(false);
       return;
     }
-
     const fetchSelectedDekk = async () => {
       try {
         const idArray = ids.split(',').map(Number);
-        // Fetch each tire individually
         const promises = idArray.map(id => fetchDekk({ id }));
         const results = await Promise.all(promises);
-        // Flatten the results as fetchDekk returns an array
         const allDekk = results.flatMap(result => result);
-        // Extend each Dekk with computed "size" field
         const formattedDekk = allDekk.map(d => ({
           ...d,
           size: `${d.width}/${d.aspect_ratio}R${d.rim_size}`,
@@ -47,27 +42,12 @@ export default function Samanburdur() {
         setIsLoading(false);
       }
     };
-
     fetchSelectedDekk();
   }, [searchParams]);
-
-  const formatPrice = (price: number | null) => {
-    if (!price) return 'Verð óþekkt';
-    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} kr`;
-  };
-
-  const getStockStatus = (stock: string | null, count: number | null) => {
-    if (!stock) return 'Birgðastaða óþekkt';
-    if (stock.toLowerCase().includes('in stock') || stock.toLowerCase().includes('til í')) {
-      return 'Á lager' + (count ? `: ${count} stk` : '');
-    }
-    return 'Ekki á lager';
-  };
 
   const removeDekk = (id: number) => {
     const newDekk = dekk.filter(d => d.id !== id);
     if (newDekk.length < 2) {
-      // If less than 2 tires remain, go back to the listing page
       router.back();
     } else {
       setDekk(newDekk);
@@ -88,7 +68,7 @@ export default function Samanburdur() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-50 p-6 rounded-lg text-center">
-          <p className="text-lg mb-4">{error || 'Engin dekk valin til samanburðar'}</p>
+          <p className="text-lg mb-4">{error || 'Engin dekk fundust til samanburðar'}</p>
           <Link href="/dekk" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded inline-block">
             Aftur í dekkjaleit
           </Link>
@@ -105,7 +85,6 @@ export default function Samanburdur() {
         </Link>
         <h1 className="text-2xl font-bold mt-4">Samanburður á dekkjum</h1>
       </div>
-
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
@@ -127,7 +106,6 @@ export default function Samanburdur() {
             </tr>
           </thead>
           <tbody>
-            {/* Image row */}
             <tr>
               <td className="p-4 border-b font-semibold">Mynd</td>
               {dekk.map(d => (
@@ -150,60 +128,40 @@ export default function Samanburdur() {
                 </td>
               ))}
             </tr>
-
-            {/* Name row */}
             <tr>
               <td className="p-4 border-b font-semibold">Nafn</td>
               {dekk.map(d => (
                 <td key={d.id} className="p-4 border-b text-center">{d.product_name}</td>
               ))}
             </tr>
-
-            {/* Manufacturer row */}
             <tr>
               <td className="p-4 border-b font-semibold">Framleiðandi</td>
               {dekk.map(d => (
                 <td key={d.id} className="p-4 border-b text-center">{d.manufacturer || 'Óþekkt'}</td>
               ))}
             </tr>
-
-            {/* Size row */}
             <tr>
               <td className="p-4 border-b font-semibold">Stærð</td>
               {dekk.map(d => (
                 <td key={d.id} className="p-4 border-b text-center">{d.size}</td>
               ))}
             </tr>
-
-            {/* Price row */}
             <tr>
               <td className="p-4 border-b font-semibold">Verð</td>
               {dekk.map(d => (
                 <td key={d.id} className="p-4 border-b text-center font-bold">
-                  {formatPrice(d.price)}
+                  {d.price.toLocaleString('is-IS')} kr
                 </td>
               ))}
             </tr>
-
-            {/* Stock row */}
             <tr>
               <td className="p-4 border-b font-semibold">Birgðastaða</td>
               {dekk.map(d => (
                 <td key={d.id} className="p-4 border-b text-center">
-                  <span 
-                    className={`px-2 py-1 rounded text-sm ${
-                      d.stock.toLowerCase().includes('in stock') || d.stock.toLowerCase().includes('til í')
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}
-                  >
-                    {getStockStatus(d.stock, d.inventory_count)}
-                  </span>
+                  {d.stock}
                 </td>
               ))}
             </tr>
-
-            {/* Source row */}
             <tr>
               <td className="p-4 border-b font-semibold">Söluaðili</td>
               {dekk.map(d => (
