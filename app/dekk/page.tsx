@@ -15,25 +15,24 @@ export default function DekkjaListi() {
   const [filter, setFilter] = useState<DekkFilter>({});
   const [selectedDekk, setSelectedDekk] = useState<Dekk[]>([]);
   const [sortBy, setSortBy] = useState<"price" | "manufacturer" | "seller" | undefined>(undefined);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>(undefined);
 
   useEffect(() => {
     const width = searchParams.get('width');
     const aspect_ratio = searchParams.get('aspect_ratio');
     const rim_size = searchParams.get('rim_size');
     const sortBy = searchParams.get('sortBy') as "price" | "manufacturer" | "seller" | undefined;
-    const sortOrder = searchParams.get('sortOrder') as "asc" | "desc" | undefined;
 
     const newFilter: DekkFilter = {};
     if (width) newFilter.width = parseInt(width);
     if (aspect_ratio) newFilter.aspect_ratio = parseInt(aspect_ratio);
     if (rim_size) newFilter.rim_size = parseInt(rim_size);
-    if (sortBy) newFilter.sortBy = sortBy;
-    if (sortOrder) newFilter.sortOrder = sortOrder;
+    if (sortBy) {
+      newFilter.sortBy = sortBy;
+      newFilter.sortOrder = 'asc';
+    }
 
     setFilter(newFilter);
     setSortBy(sortBy);
-    setSortOrder(sortOrder);
   }, [searchParams]);
 
   const { data: dekk, isLoading, isError } = useDekkja(filter);
@@ -112,8 +111,10 @@ export default function DekkjaListi() {
     if (filter.width) params.append('width', filter.width.toString());
     if (filter.aspect_ratio) params.append('aspect_ratio', filter.aspect_ratio.toString());
     if (filter.rim_size) params.append('rim_size', filter.rim_size.toString());
-    if (sortBy) params.append('sortBy', sortBy);
-    if (sortOrder) params.append('sortOrder', sortOrder);
+    if (sortBy) {
+      params.append('sortBy', sortBy);
+      params.append('sortOrder', 'asc');
+    }
     router.push(`/dekk?${params.toString()}`);
   };
 
@@ -151,18 +152,6 @@ export default function DekkjaListi() {
                   <option value="price">Verð</option>
                   <option value="manufacturer">Framleiðandi</option>
                   <option value="seller">Seljandi</option>
-                </select>
-              </div>
-              <div className="w-full md:w-auto flex-1">
-                <label className="form-label">Raðunar röð</label>
-                <select
-                  className="form-select"
-                  value={sortOrder ?? ""}
-                  onChange={(e) => setSortOrder(e.target.value as "asc" | "desc" || undefined)}
-                >
-                  <option value="">Velja röð...</option>
-                  <option value="asc">Eftir vaxandi</option>
-                  <option value="desc">Eftir lækkandi</option>
                 </select>
               </div>
               <div className="w-full md:w-auto flex-1 flex items-end">
