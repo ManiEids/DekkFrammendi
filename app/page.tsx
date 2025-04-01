@@ -12,7 +12,9 @@ export default function Forsida() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [filter, setFilter] = useState<DekkFilter>({});
-  
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [updateMessage, setUpdateMessage] = useState('');
+
   // Populate initial filter from URL if present.
   useEffect(() => {
     const width = searchParams.get('width');
@@ -24,23 +26,46 @@ export default function Forsida() {
     if (rim_size) newFilter.rim_size = parseInt(rim_size);
     setFilter(newFilter);
   }, [searchParams]);
-  
+
+  // Fetch last update info from internal API
+  useEffect(() => {
+    fetch('/api/lastUpdated')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.lastUpdate) {
+          const dt = new Date(data.lastUpdate);
+          setLastUpdate(dt);
+          const diffMs = new Date().getTime() - dt.getTime();
+          const diffDays = diffMs / (1000 * 60 * 60 * 24);
+          if (diffDays >= 1) {
+            setUpdateMessage("Mæli með að keyra scrapy spiders aftur. Dagur+ síðan seinast");
+          }
+        }
+      })
+      .catch((err) => console.error("Error fetching last update:", err));
+  }, []);
+
   const { data: dekk, isLoading, isError } = useDekkja(filter);
 
   const handleFilterChange = (newFilter: DekkFilter) => {
     setFilter({ ...filter, ...newFilter });
   };
-  
+
   const handleClearFilters = () => {
     setFilter({});
   };
-  
+
   const handleLeit = () => {
     const params = new URLSearchParams();
     if (filter.width) params.append('width', filter.width.toString());
     if (filter.aspect_ratio) params.append('aspect_ratio', filter.aspect_ratio.toString());
     if (filter.rim_size) params.append('rim_size', filter.rim_size.toString());
     router.push(`/dekk?${params.toString()}`);
+  };
+
+  // Format last update date in Icelandic format
+  const formatLastUpdate = (date: Date) => {
+    return date.toLocaleString('is-IS');
   };
 
   return (
@@ -50,15 +75,24 @@ export default function Forsida() {
           <FaArrowLeft className="mr-2" /> Forsíða
         </Link>
       </div>
-      
+
       <h1 className="text-3xl font-bold mb-6 text-center">Finndu bestu dekkin</h1>
       
+      {/* Last updated info */}
+      {lastUpdate && (
+        <div className="mb-4 text-center text-sm text-gray-700">
+          <p><strong>Gagnagrunnur síðast uppfærður:</strong> {formatLastUpdate(lastUpdate)}</p>
+          {updateMessage && <p className="mt-1 text-red-600">{updateMessage}</p>}
+        </div>
+      )}
+
       {/* Search form using dropdown filters */}
       <DekkjaFilter 
         filter={filter} 
         onFilterChange={handleFilterChange} 
         onClearFilters={handleClearFilters}
       />
+      
       <div className="mt-6 text-center">
         <button 
           onClick={handleLeit}

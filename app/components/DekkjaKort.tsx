@@ -3,10 +3,16 @@ import { Dekk } from '../types';
 import { FaCar } from 'react-icons/fa';  // Changed from FaTire to FaCar which exists
 
 export default function DekkjaKort({ dekk, onAddToSamanburdur, isSelected }: { dekk: Dekk; onAddToSamanburdur?: () => void; isSelected?: boolean; }) {
-  // Format price with dot as thousands separator and ISK
+  // Updated price formatting using Intl.NumberFormat
   const formatPrice = (price: number | null) => {
     if (!price) return 'Verð óþekkt';
-    return `${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} kr`;
+    const formatter = new Intl.NumberFormat('is-IS', { 
+      style: 'currency', 
+      currency: 'ISK', 
+      minimumFractionDigits: 0, 
+      maximumFractionDigits: 0 
+    });
+    return formatter.format(price);
   };
   
   // Get stock status in Icelandic
@@ -24,6 +30,7 @@ export default function DekkjaKort({ dekk, onAddToSamanburdur, isSelected }: { d
         <div className="relative pt-[56.25%] bg-gray-100">
           {dekk.picture ? (
             <Image
+              unoptimized
               src={dekk.picture}
               alt={dekk.product_name}
               fill

@@ -1,9 +1,10 @@
 import { DekkFilter } from '../types';
+import { WIDTHS, HEIGHTS, RIM_SIZES } from '../constants';
 
 interface DekkjaFilterProps {
   filter: DekkFilter;
   onFilterChange: (newFilter: DekkFilter) => void;
-  onClearFilters?: () => void; // Added optional prop
+  onClearFilters?: () => void;
 }
 
 export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }: DekkjaFilterProps) {
@@ -18,10 +19,11 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
           onChange={(e) => onFilterChange({ width: e.target.value ? Number(e.target.value) : undefined })}
         >
           <option value="">Velja aðra breidd...</option>
-          <option value="185">185 mm</option>
-          <option value="195">195 mm</option>
-          <option value="205">205 mm</option>
-          <option value="225">225 mm</option>
+          {WIDTHS.map((w) => (
+            <option key={w} value={w}>
+              {w} mm
+            </option>
+          ))}
         </select>
       </div>
       {/* Hæð dropdown */}
@@ -33,11 +35,11 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
           onChange={(e) => onFilterChange({ aspect_ratio: e.target.value ? Number(e.target.value) : undefined })}
         >
           <option value="">Velja aðra hæð...</option>
-          <option value="45">45</option>
-          <option value="50">50</option>
-          <option value="55">55</option>
-          <option value="60">60</option>
-          <option value="65">65</option>
+          {HEIGHTS.map((h) => (
+            <option key={h} value={h}>
+              {h}
+            </option>
+          ))}
         </select>
       </div>
       {/* Felgustærð dropdown */}
@@ -49,11 +51,11 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
           onChange={(e) => onFilterChange({ rim_size: e.target.value ? Number(e.target.value) : undefined })}
         >
           <option value="">Velja aðra felgustærð...</option>
-          <option value="16">R16</option>
-          <option value="17">R17</option>
-          <option value="18">R18</option>
-          <option value="19">R19</option>
-          <option value="20">R20</option>
+          {RIM_SIZES.map((f) => (
+            <option key={f} value={f}>
+              R{f}
+            </option>
+          ))}
         </select>
       </div>
       {/* Clear button */}
