@@ -88,26 +88,26 @@ export default function Forsida() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 space-bg">
-      <div className="flex justify-between mb-8">
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 space-bg">
+      <div className="flex justify-between mb-4 sm:mb-8">
         <Link href="/" className="flex items-center text-white hover:text-accent-color">
           <FaArrowLeft className="mr-2" /> Forsíða
         </Link>
       </div>
 
-      <h1 className="text-3xl font-bold mb-8 text-center text-white">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-white">
         Finndu bestu dekkin
       </h1>
       
       {/* Updated search form container with improved contrast */}
-      <div className="mb-8 max-w-lg mx-auto">
+      <div className="mb-6 sm:mb-8 max-w-lg mx-auto">
         <DekkjaFilter 
           filter={filter} 
           onFilterChange={handleFilterChange} 
           onClearFilters={handleClearFilters}
         />
         
-        <div className="mt-6 text-center space-y-4">
+        <div className="mt-4 sm:mt-6 text-center space-y-3 sm:space-y-4">
           {/* Modified search button - no longer disabled if filters are empty */}
           <button 
             onClick={handleLeit}
@@ -119,7 +119,7 @@ export default function Forsida() {
           {/* New button to see all tires */}
           <button 
             onClick={handleViewAllTires}
-            className="w-full py-3 px-3 rounded-lg bg-blue-800 hover:bg-blue-900 text-white transition"
+            className="w-full py-2 sm:py-3 px-3 rounded-lg bg-blue-800 hover:bg-blue-900 text-white transition"
           >
             Sýna öll dekk
           </button>
@@ -132,7 +132,7 @@ export default function Forsida() {
       {dekk && dekk.length === 0 && !isLoading && <div className="mt-6 text-center text-warning">Engin dekk fundust.</div>}
       
       {/* Database last updated info - now with refresh button */}
-      <div className="mt-16 p-4 bg-black bg-opacity-30 rounded-lg text-center relative">
+      <div className="mt-10 sm:mt-16 p-4 bg-black bg-opacity-30 rounded-lg text-center relative">
         {/* Refresh button */}
         <button 
           onClick={fetchLastUpdate}
@@ -145,16 +145,16 @@ export default function Forsida() {
         
         {lastUpdate ? (
           <>
-            <p className="text-white">
+            <p className="text-white text-sm sm:text-base">
               <strong>Gagnagrunnur síðast uppfærður:</strong> {formatLastUpdate(lastUpdate)}
             </p>
             {totalTires > 0 && (
-              <p className="mt-1 text-white">
+              <p className="mt-1 text-white text-sm sm:text-base">
                 <strong>Total dekk:</strong> {totalTires.toLocaleString('is-IS')} 
                 <span className="ml-2">{updateMessage ? "⚠️" : "✅"}</span>
               </p>
             )}
-            {updateMessage && <p className="mt-1 text-orange-300">{updateMessage}</p>}
+            {updateMessage && <p className="mt-1 text-orange-300 text-sm">{updateMessage}</p>}
           </>
         ) : (
           <p className="text-yellow-300">Gögn um síðustu uppfærslu ekki tiltæk</p>

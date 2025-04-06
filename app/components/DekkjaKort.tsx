@@ -32,7 +32,7 @@ export default function DekkjaKort({ dekk, onAddToSamanburdur, isSelected }: { d
   };
   
   return (
-    <div className={`border rounded-lg overflow-hidden bg-white shadow-md transition ${isSelected ? 'ring-2 ring-blue-500' : 'hover:shadow-lg'}`}>
+    <div className={`border rounded-lg overflow-hidden bg-white shadow-md transition h-full ${isSelected ? 'ring-2 ring-blue-500' : 'hover:shadow-lg'}`}>
       <div className="flex flex-col h-full">
         <div className="relative pt-[56.25%] bg-gray-100">
           {dekk.picture ? (
@@ -51,31 +51,33 @@ export default function DekkjaKort({ dekk, onAddToSamanburdur, isSelected }: { d
           )}
         </div>
         
-        <div className="p-4 flex flex-col flex-grow">
+        <div className="p-3 sm:p-4 flex flex-col flex-grow">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm font-semibold text-blue-600">
+            <div className="text-xs sm:text-sm font-semibold text-blue-600">
               {dekk.seller}
             </div>
-            <span className="text-sm text-gray-500">
+            <span className="text-xs sm:text-sm text-gray-500">
               {`${dekk.width}/${dekk.aspect_ratio}R${dekk.rim_size}`}
             </span>
           </div>
           
           {/* Enhanced product name display */}
-          <h3 className="card-product-name">{dekk.product_name}</h3>
-          {dekk.manufacturer && <p className="text-sm text-gray-600 mb-3">Framleiðandi: {dekk.manufacturer}</p>}
+          <h3 className="text-sm sm:text-base font-semibold mb-1">{dekk.product_name}</h3>
+          {dekk.manufacturer && <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">Framleiðandi: {dekk.manufacturer}</p>}
           
           <div className="mt-auto">
-            <p className="text-lg font-bold text-blue-600">{formatPrice(dekk.price)}</p>
-            {renderStockStatus(dekk.stock, dekk.inventory_count)}
+            <p className="text-base sm:text-lg font-bold text-blue-600">{formatPrice(dekk.price)}</p>
+            <div className="text-xs sm:text-sm">
+              {renderStockStatus(dekk.stock, dekk.inventory_count)}
+            </div>
           </div>
         </div>
         
         {onAddToSamanburdur && (
-          <div className="px-4 pb-4">
+          <div className="px-3 sm:px-4 pb-3 sm:pb-4">
             <button 
               onClick={onAddToSamanburdur}
-              className={`w-full py-2 px-4 rounded text-sm ${isSelected ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'}`}
+              className={`w-full py-1.5 sm:py-2 px-3 sm:px-4 rounded text-xs sm:text-sm ${isSelected ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'}`}
             >
               {isSelected ? 'Fjarlægja úr samanburði' : 'Bæta við samanburð'}
             </button>

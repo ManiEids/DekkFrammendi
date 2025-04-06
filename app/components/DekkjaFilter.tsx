@@ -11,10 +11,10 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
   return (
     <div className="search-container">
       {/* Breidd dropdown */}
-      <div className="mb-4">
+      <div className="mb-3 sm:mb-4">
         <label className="form-label">Breidd</label>
         <select
-          className="form-select"
+          className="form-select text-base"
           value={filter.width ?? ""}
           onChange={(e) => onFilterChange({ width: e.target.value ? Number(e.target.value) : undefined })}
         >
@@ -28,10 +28,10 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
       </div>
       
       {/* Hæð dropdown */}
-      <div className="mb-4">
+      <div className="mb-3 sm:mb-4">
         <label className="form-label">Hæð</label>
         <select
-          className="form-select"
+          className="form-select text-base"
           value={filter.aspect_ratio ?? ""}
           onChange={(e) => onFilterChange({ aspect_ratio: e.target.value ? Number(e.target.value) : undefined })}
         >
@@ -45,10 +45,10 @@ export default function DekkjaFilter({ filter, onFilterChange, onClearFilters }:
       </div>
       
       {/* Felgustærð dropdown */}
-      <div className="mb-4">
+      <div className="mb-3 sm:mb-4">
         <label className="form-label">Felgustærð</label>
         <select
-          className="form-select"
+          className="form-select text-base"
           value={filter.rim_size ?? ""}
           onChange={(e) => onFilterChange({ rim_size: e.target.value ? Number(e.target.value) : undefined })}
         >

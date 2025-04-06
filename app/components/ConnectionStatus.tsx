@@ -46,11 +46,12 @@ export default function ConnectionStatus() {
     }
   };
 
+  // Smaller button on mobile
   if (!isVisible) {
     return (
       <button 
         onClick={() => setIsVisible(true)}
-        className="fixed bottom-4 left-4 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md z-50 text-xs"
+        className="fixed bottom-2 sm:bottom-4 left-2 sm:left-4 p-1.5 sm:p-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md z-50 text-xs"
       >
         Sýna stöðu
       </button>
@@ -58,13 +59,13 @@ export default function ConnectionStatus() {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 p-3 bg-gray-800 text-white rounded-md shadow-md z-50">
+    <div className="fixed bottom-2 sm:bottom-4 left-2 sm:left-4 p-2 sm:p-3 bg-gray-800 text-white rounded-md shadow-md z-50 max-w-[90vw] sm:max-w-none">
       <div className="flex items-center">
-        <div className={`w-3 h-3 rounded-full mr-2 ${getStatusColor()}`}></div>
-        <span className="text-sm">{getStatusText()}</span>
+        <div className={`w-2.5 h-2.5 rounded-full mr-2 ${getStatusColor()}`}></div>
+        <span className="text-xs sm:text-sm truncate">{getStatusText()}</span>
         <button 
           onClick={() => setIsVisible(false)}
-          className="ml-3 text-gray-300 hover:text-gray-100 text-xs"
+          className="ml-2 sm:ml-3 text-gray-300 hover:text-gray-100 text-xs flex-shrink-0"
         >
           ✕
         </button>

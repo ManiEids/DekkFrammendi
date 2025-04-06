@@ -78,20 +78,22 @@ export default function Samanburdur() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <div className="mb-4 sm:mb-8">
         <Link href="/dekk" className="flex items-center text-blue-600 hover:underline">
           <FaArrowLeft className="mr-2" /> Til baka í dekkjaleit
         </Link>
-        <h1 className="text-2xl font-bold mt-4">Samanburður á dekkjum</h1>
+        <h1 className="text-xl sm:text-2xl font-bold mt-3 text-white">Samanburður á dekkjum</h1>
+        <p className="text-sm text-gray-300 mt-1">Renndu til hliðar til að sjá allan samanburðinn</p>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
+      
+      <div className="overflow-x-auto pb-6 -mx-2 px-2">
+        <table className="w-full border-collapse min-w-[600px]">
           <thead>
             <tr>
-              <th className="p-4 bg-gray-100 text-left font-semibold border-b"></th>
+              <th className="p-3 bg-gray-100 text-left font-semibold border-b"></th>
               {dekk.map(d => (
-                <th key={d.id} className="p-4 bg-gray-100 text-center border-b min-w-[250px]">
+                <th key={d.id} className="p-3 bg-gray-100 text-center border-b min-w-[180px]">
                   <div className="relative">
                     <button 
                       onClick={() => removeDekk(d.id)}

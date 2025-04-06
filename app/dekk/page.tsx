@@ -119,18 +119,18 @@ export default function DekkjaListi() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <Link href="/" className="flex items-center text-white hover:text-accent-color">
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-8">
+        <Link href="/" className="flex items-center text-white hover:text-accent-color mb-2 sm:mb-0">
           <FaArrowLeft className="mr-2" /> Til baka
         </Link>
-        <h1 className="text-2xl font-bold text-center text-white">
+        <h1 className="text-xl sm:text-2xl font-bold text-center text-white">
           {createSizeTitle()}
         </h1>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="w-full lg:w-64">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
+        <div className="w-full lg:w-64 mb-4 lg:mb-0">
           <DekkjaFilter
             filter={filter}
             onFilterChange={handleFilterChange}
@@ -138,10 +138,10 @@ export default function DekkjaListi() {
           />
         </div>
 
-        <div className="flex-1 max-w-full overflow-y-auto">
+        <div className="flex-1 max-w-full">
           <div className="search-container mb-4">
-            <div className="flex flex-col md:flex-row gap-4 items-start">
-              <div className="w-full md:w-auto flex-1">
+            <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
+              <div className="w-full sm:w-auto flex-1">
                 <label className="form-label">Raða eftir</label>
                 <select
                   className="form-select"
@@ -154,9 +154,9 @@ export default function DekkjaListi() {
                   <option value="seller">Seljandi</option>
                 </select>
               </div>
-              <div className="w-full md:w-auto flex-1 flex items-end">
+              <div className="w-full sm:w-auto flex-grow-0">
                 <button
-                  className="btn-primary w-full"
+                  className="btn-primary w-full py-2 px-4"
                   onClick={handleLeit}
                 >
                   Uppfæra leit
@@ -200,14 +200,14 @@ export default function DekkjaListi() {
           )}
 
           {!isLoading && !isError && dekk && dekk.length > 0 && (
-            <div className="overflow-y-auto">
-              <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between">
-                <p className="text-white">{dekk.length} dekk fundust</p>
+            <div>
+              <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between">
+                <p className="text-white text-center sm:text-left">{dekk.length} dekk fundust</p>
                 {formatPriceInfo() && (
-                  <p className="text-white mt-1 md:mt-0">{formatPriceInfo()}</p>
+                  <p className="text-white mt-1 sm:mt-0 text-center sm:text-left">{formatPriceInfo()}</p>
                 )}
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {dekk.map((item) => (
                   <DekkjaKort
                     key={item.id}
