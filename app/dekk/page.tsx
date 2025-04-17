@@ -138,7 +138,7 @@ export default function DekkjaListi() {
           />
         </div>
 
-        <div className="flex-1 max-w-full">
+        <div className="flex-1">
           <div className="search-container mb-4">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
               <div className="w-full sm:w-auto flex-1">
@@ -207,7 +207,7 @@ export default function DekkjaListi() {
                   <p className="text-white mt-1 sm:mt-0 text-center sm:text-left">{formatPriceInfo()}</p>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 pb-12">
                 {dekk.map((item) => (
                   <DekkjaKort
                     key={item.id}

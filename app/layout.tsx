@@ -30,6 +30,7 @@ export default function RootLayout({
       <head>
         <title>Dekkjasafn - Dekkjaverð á einum stað</title>
         <meta name="description" content="Finndu dekk á besta verðinu frá öllum helstu söluaðilum á Íslandi." />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </head>
       <body className={`${inter.className} space-bg`}>
         <QueryClientProvider client={queryClient}>

@@ -8,7 +8,7 @@
   --foreground-rgb: 255, 255, 255;
   --background-start: #000428; /* Dark space blue */
   --background-end: #004e92;   /* Lighter space blue */
-  --accent-color: #ff6f61;     /* Warm accent color */
+  --accent-color: #4CAF50;     /* Changed to green from reddish color */
   --search-bg: rgba(29, 37, 68, 0.85); /* More visible background for search boxes */
   --heading-color: #ffffff;
   --text-on-dark: #ffffff;
@@ -19,6 +19,8 @@
 
 html, body {
   height: 100%;
+  min-height: 100%;
+  width: 100%;
   overflow-x: hidden;
   scroll-behavior: smooth;
 }
@@ -28,10 +30,13 @@ body {
   background: linear-gradient(180deg, var(--background-start), var(--background-end)) fixed;
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
+  overflow-y: auto !important; /* Force scrolling to be allowed */
+  position: relative;
 }
 
 .container {
   max-width: 1280px;
+  width: 100%;
 }
 
 /* Custom search container styling with better contrast */
@@ -75,7 +80,7 @@ body {
   display: block;
 }
 
-/* Button styling with improved visibility */
+/* Button styling - changed to green */
 .btn-primary {
   background-color: var(--accent-color);
   color: white;
@@ -87,7 +92,7 @@ body {
 }
 
 .btn-primary:hover {
-  background-color: #e25d4f;
+  background-color: #45a049; /* Darker green on hover */
   transform: translateY(-1px);
 }
 
@@ -160,6 +165,7 @@ h1, h2, h3, h4, h5, h6 {
   background-size: 200px 200px;
   opacity: 0.15;
   z-index: -1;
+  pointer-events: none; /* Ensure clicks pass through */
 }
 
 /* Make sure main content is scrollable */

@@ -61,8 +61,10 @@ export default function DekkjaKort({ dekk, onAddToSamanburdur, isSelected }: { d
             </span>
           </div>
           
-          {/* Enhanced product name display */}
-          <h3 className="text-sm sm:text-base font-semibold mb-1">{dekk.product_name}</h3>
+          {/* Fixed product name styling with proper contrast */}
+          <h3 className="card-product-name text-sm sm:text-base font-semibold mb-1 text-gray-800">
+            {dekk.product_name}
+          </h3>
           {dekk.manufacturer && <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">Framleiðandi: {dekk.manufacturer}</p>}
           
           <div className="mt-auto">

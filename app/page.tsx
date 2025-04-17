@@ -17,10 +17,8 @@ export default function Forsida() {
   const [updateMessage, setUpdateMessage] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Extract fetch logic into a reusable function
   const fetchLastUpdate = () => {
     setIsRefreshing(true);
-    // Add timestamp to URL to prevent caching
     const timestamp = new Date().getTime();
     fetch(`/api/lastUpdated?_=${timestamp}`)
       .then((res) => res.json())
@@ -40,12 +38,10 @@ export default function Forsida() {
       .finally(() => setIsRefreshing(false));
   };
 
-  // Initial fetch on component mount
   useEffect(() => {
     fetchLastUpdate();
   }, []);
 
-  // Populate initial filter from URL if present.
   useEffect(() => {
     const width = searchParams.get('width');
     const aspect_ratio = searchParams.get('aspect_ratio');
@@ -72,23 +68,19 @@ export default function Forsida() {
     if (filter.width) params.append('width', filter.width.toString());
     if (filter.aspect_ratio) params.append('aspect_ratio', filter.aspect_ratio.toString());
     if (filter.rim_size) params.append('rim_size', filter.rim_size.toString());
-    
-    // Navigate to dekk page with any parameters that were provided (or none)
     router.push(`/dekk${params.toString() ? `?${params.toString()}` : ''}`);
   };
 
-  // New function to see all tires
   const handleViewAllTires = () => {
     router.push('/dekk');
   };
 
-  // Format last update date in Icelandic format
   const formatLastUpdate = (date: Date) => {
     return date.toLocaleString('is-IS');
   };
 
   return (
-    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 space-bg">
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
       <div className="flex justify-between mb-4 sm:mb-8">
         <Link href="/" className="flex items-center text-white hover:text-accent-color">
           <FaArrowLeft className="mr-2" /> Forsíða
@@ -99,7 +91,6 @@ export default function Forsida() {
         Finndu bestu dekkin
       </h1>
       
-      {/* Updated search form container with improved contrast */}
       <div className="mb-6 sm:mb-8 max-w-lg mx-auto">
         <DekkjaFilter 
           filter={filter} 
@@ -108,32 +99,27 @@ export default function Forsida() {
         />
         
         <div className="mt-4 sm:mt-6 text-center space-y-3 sm:space-y-4">
-          {/* Modified search button - no longer disabled if filters are empty */}
           <button 
             onClick={handleLeit}
-            className="btn-primary w-full"
+            className="btn-primary w-full py-3 px-4"
           >
             <FaSearch className="mr-2 inline-block" /> Leita að dekkjum
           </button>
           
-          {/* New button to see all tires */}
           <button 
             onClick={handleViewAllTires}
-            className="w-full py-2 sm:py-3 px-3 rounded-lg bg-blue-800 hover:bg-blue-900 text-white transition"
+            className="w-full py-3 px-3 rounded-lg bg-blue-800 hover:bg-blue-900 text-white transition"
           >
             Sýna öll dekk
           </button>
         </div>
       </div>
       
-      {/* Display results status with improved visibility */}
       {isLoading && <div className="mt-6 text-center text-white">Hleður gögnum…</div>}
       {isError && <div className="mt-6 text-center text-error">Villa við að sækja gögn.</div>}
       {dekk && dekk.length === 0 && !isLoading && <div className="mt-6 text-center text-warning">Engin dekk fundust.</div>}
       
-      {/* Database last updated info - now with refresh button */}
       <div className="mt-10 sm:mt-16 p-4 bg-black bg-opacity-30 rounded-lg text-center relative">
-        {/* Refresh button */}
         <button 
           onClick={fetchLastUpdate}
           disabled={isRefreshing}
